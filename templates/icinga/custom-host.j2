@@ -1,0 +1,10 @@
+object Host "{{ host }}-from-{{ icinga_zone }}" {
+  # Base config
+  import   "generic-host"
+  zone     = "{{ icinga_zone }}"
+  address  = "{{ ip }}"
+
+  # Check config
+  vars.config["check"]["type"]  = "{{ check_type }}"
+  vars.config["server"]["tags"] = ["no-fqdn-check"]
+}
