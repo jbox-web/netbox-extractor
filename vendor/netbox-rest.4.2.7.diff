@@ -1,0 +1,194 @@
+diff --git a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster.cr b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster.cr
+index 9c3f9cc..eaea378 100644
+--- a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster.cr
++++ b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster.cr
+@@ -32,8 +32,8 @@ module NetboxClient
+     @[JSON::Field(key: "name", type: String, nillable: false, emit_null: false)]
+     property name : String
+ 
+-    @[JSON::Field(key: "virtualmachine_count", type: Int64, nillable: false, emit_null: false)]
+-    property virtualmachine_count : Int64
++    @[JSON::Field(key: "virtualmachine_count", type: Int64?, nillable: true, emit_null: false)]
++    property virtualmachine_count : Int64?
+ 
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]
+diff --git a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster_group.cr b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster_group.cr
+index 7a18cb5..232724f 100644
+--- a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster_group.cr
++++ b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster_group.cr
+@@ -35,8 +35,8 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+ 
+-    @[JSON::Field(key: "cluster_count", type: Int64, nillable: false, emit_null: false)]
+-    property cluster_count : Int64
++    @[JSON::Field(key: "cluster_count", type: Int64?, nillable: false, emit_null: false)]
++    property cluster_count : Int64?
+ 
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]
+diff --git a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster_type.cr b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster_type.cr
+index 7c902df..8ff2818 100644
+--- a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster_type.cr
++++ b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_cluster_type.cr
+@@ -35,8 +35,8 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+ 
+-    @[JSON::Field(key: "cluster_count", type: Int64, nillable: false, emit_null: false)]
+-    property cluster_count : Int64
++    @[JSON::Field(key: "cluster_count", type: Int64?, nillable: true, emit_null: false)]
++    property cluster_count : Int64?
+ 
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]
+diff --git a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_device_role.cr b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_device_role.cr
+index 78fd17c..4e205a1 100644
+--- a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_device_role.cr
++++ b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_device_role.cr
+@@ -35,11 +35,11 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+ 
+-    @[JSON::Field(key: "device_count", type: Int64, nillable: false, emit_null: false)]
+-    property device_count : Int64
++    @[JSON::Field(key: "device_count", type: Int64?, nillable: true, emit_null: false)]
++    property device_count : Int64?
+ 
+-    @[JSON::Field(key: "virtualmachine_count", type: Int64, nillable: false, emit_null: false)]
+-    property virtualmachine_count : Int64
++    @[JSON::Field(key: "virtualmachine_count", type: Int64?, nillable: true, emit_null: false)]
++    property virtualmachine_count : Int64?
+ 
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]
+diff --git a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_device_type.cr b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_device_type.cr
+index f4f379d..e92492b 100644
+--- a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_device_type.cr
++++ b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_device_type.cr
+@@ -38,8 +38,8 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+ 
+-    @[JSON::Field(key: "device_count", type: Int64, nillable: false, emit_null: false)]
+-    property device_count : Int64
++    @[JSON::Field(key: "device_count", type: Int64?, nillable: true, emit_null: false)]
++    property device_count : Int64?
+ 
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]
+diff --git a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_manufacturer.cr b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_manufacturer.cr
+index 890077f..9f64853 100644
+--- a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_manufacturer.cr
++++ b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_manufacturer.cr
+@@ -35,8 +35,8 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+ 
+-    @[JSON::Field(key: "devicetype_count", type: Int64, nillable: false, emit_null: false)]
+-    property devicetype_count : Int64
++    @[JSON::Field(key: "devicetype_count", type: Int64?, nillable: true, emit_null: false)]
++    property devicetype_count : Int64?
+ 
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]
+diff --git a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_platform.cr b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_platform.cr
+index 93acecb..bd80e09 100644
+--- a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_platform.cr
++++ b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_platform.cr
+@@ -35,11 +35,11 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+ 
+-    @[JSON::Field(key: "device_count", type: Int64, nillable: false, emit_null: false)]
+-    property device_count : Int64
++    @[JSON::Field(key: "device_count", type: Int64?, nillable: true, emit_null: false)]
++    property device_count : Int64?
+ 
+-    @[JSON::Field(key: "virtualmachine_count", type: Int64, nillable: false, emit_null: false)]
+-    property virtualmachine_count : Int64
++    @[JSON::Field(key: "virtualmachine_count", type: Int64?, nillable: true, emit_null: false)]
++    property virtualmachine_count : Int64?
+ 
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]
+diff --git a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_rack.cr b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_rack.cr
+index 01d0f0f..5e51e36 100644
+--- a/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_rack.cr
++++ b/vendor/netbox-client.4.2.7/src/netbox-client/models/brief_rack.cr
+@@ -32,8 +32,8 @@ module NetboxClient
+     @[JSON::Field(key: "name", type: String, nillable: false, emit_null: false)]
+     property name : String
+ 
+-    @[JSON::Field(key: "device_count", type: Int64, nillable: false, emit_null: false)]
+-    property device_count : Int64
++    @[JSON::Field(key: "device_count", type: Int64?, nillable: true, emit_null: false)]
++    property device_count : Int64?
+ 
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]
+diff --git a/vendor/netbox-client.4.2.7/src/netbox-client/models/device_with_config_context.cr b/vendor/netbox-client.4.2.7/src/netbox-client/models/device_with_config_context.cr
+index 840d388..c66f443 100644
+--- a/vendor/netbox-client.4.2.7/src/netbox-client/models/device_with_config_context.cr
++++ b/vendor/netbox-client.4.2.7/src/netbox-client/models/device_with_config_context.cr
+@@ -41,14 +41,14 @@ module NetboxClient
+     @[JSON::Field(key: "site", type: BriefSite, nillable: false, emit_null: false)]
+     property site : BriefSite
+ 
+-    @[JSON::Field(key: "parent_device", type: NestedDevice, nillable: false, emit_null: false)]
+-    property parent_device : NestedDevice
++    @[JSON::Field(key: "parent_device", type: NestedDevice?, nillable: true, emit_null: false)]
++    property parent_device : NestedDevice?
+ 
+-    @[JSON::Field(key: "primary_ip", type: BriefIPAddress, nillable: false, emit_null: false)]
+-    property primary_ip : BriefIPAddress
++    @[JSON::Field(key: "primary_ip", type: BriefIPAddress?, nillable: true, emit_null: false)]
++    property primary_ip : BriefIPAddress?
+ 
+-    @[JSON::Field(key: "config_context", type: Nil | String | Bool | Int32 | Int64 | Float32 | Float64 | Time, nillable: false, emit_null: false)]
+-    property config_context : Nil | String | Bool | Int32 | Int64 | Float32 | Float64 | Time
++    @[JSON::Field(key: "config_context", type: Hash(String, Nil | String | Bool | Int32 | Int64 | Float32 | Float64 | Time)?, nillable: true, emit_null: false)]
++    property config_context : Hash(String, Nil | String | Bool | Int32 | Int64 | Float32 | Float64 | Time)?
+ 
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time
+diff --git a/vendor/netbox-client.4.2.7/src/netbox-client/models/virtual_machine_with_config_context.cr b/vendor/netbox-client.4.2.7/src/netbox-client/models/virtual_machine_with_config_context.cr
+index a43c4db..36ddd16 100644
+--- a/vendor/netbox-client.4.2.7/src/netbox-client/models/virtual_machine_with_config_context.cr
++++ b/vendor/netbox-client.4.2.7/src/netbox-client/models/virtual_machine_with_config_context.cr
+@@ -35,11 +35,11 @@ module NetboxClient
+     @[JSON::Field(key: "name", type: String, nillable: false, emit_null: false)]
+     property name : String
+ 
+-    @[JSON::Field(key: "primary_ip", type: BriefIPAddress, nillable: false, emit_null: false)]
+-    property primary_ip : BriefIPAddress
++    @[JSON::Field(key: "primary_ip", type: BriefIPAddress?, nillable: true, emit_null: false)]
++    property primary_ip : BriefIPAddress?
+ 
+-    @[JSON::Field(key: "config_context", type: Nil | String | Bool | Int32 | Int64 | Float32 | Float64 | Time, nillable: false, emit_null: false)]
+-    property config_context : Nil | String | Bool | Int32 | Int64 | Float32 | Float64 | Time
++    @[JSON::Field(key: "config_context", type: Hash(String, Nil | String | Bool | Int32 | Int64 | Float32 | Float64 | Time)?, nillable: true, emit_null: false)]
++    property config_context : Hash(String, Nil | String | Bool | Int32 | Int64 | Float32 | Float64 | Time)?
+ 
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time
+diff --git a/vendor/netbox-client.4.2.7/shard.yml b/vendor/netbox-client.4.2.7/shard.yml
+index c3e23a9..8e24b8b 100644
+--- a/vendor/netbox-client.4.2.7/shard.yml
++++ b/vendor/netbox-client.4.2.7/shard.yml
+@@ -8,12 +8,12 @@ crystal: ">= 0.35.1"
+ dependencies:
+   crest:
+     github: mamantoha/crest
+-    version: ~> 1.3.13
++    version: ~> 1.5.0
+
+ development_dependencies:
+   kemal:
+     github: kemalcr/kemal
+-    version: ~>1.5.0
++    version: ~> 1.5.0
+   ameba:
+     github: crystal-ameba/ameba
+   spectator:

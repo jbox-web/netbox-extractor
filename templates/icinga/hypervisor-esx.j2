@@ -1,0 +1,17 @@
+object Host "{{ hostname }}" {
+  # Base config
+  import   "generic-host"
+  zone     = "{{ icinga_zone }}"
+  address  = "{{ ipv4_address }}"
+
+  vars.config["check"]["type"]          = "{{ check_type }}"
+  vars.config["server"]["zone"]         = "{{ host_zone }}"
+  vars.config["server"]["type"]         = "{{ host_type }}"
+  vars.config["server"]["tags"]         = {{ tags | sort | string | replace("'", "\"") }}
+  vars.config["server"]["os_name"]      = "{{ os_name }}"
+  vars.config["server"]["os_family"]    = "{{ os_family }}"
+  vars.config["vmware"]["username"]     = "{{ nagios_username }}"
+  vars.config["vmware"]["password"]     = "{{ nagios_password }}"
+  vars.config["server"]["vendor_name"]  = "{{ vendor_name }}"
+  vars.config["server"]["vendor_model"] = "{{ vendor_model }}"
+}
