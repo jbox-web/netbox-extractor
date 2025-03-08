@@ -1,0 +1,10 @@
+---
+Excluded:
+  - vendor/
+
+Naming/BlockParameterName:
+  Enabled: false
+
+Lint/UselessAssign:
+  Excluded:
+    - src/netbox_extractor/cli.cr

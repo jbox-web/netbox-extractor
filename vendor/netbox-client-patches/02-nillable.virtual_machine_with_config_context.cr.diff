@@ -1,0 +1,20 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/virtual_machine_with_config_context.cr b/vendor/netbox-client/src/netbox-client/models/virtual_machine_with_config_context.cr
+index 036f701..3749b03 100644
+--- a/vendor/netbox-client/src/netbox-client/models/virtual_machine_with_config_context.cr
++++ b/vendor/netbox-client/src/netbox-client/models/virtual_machine_with_config_context.cr
+@@ -35,11 +35,11 @@ module NetboxClient
+     @[JSON::Field(key: "name", type: String, nillable: false, emit_null: false)]
+     property name : String
+
+-    @[JSON::Field(key: "primary_ip", type: BriefIPAddress, nillable: false, emit_null: false)]
+-    property primary_ip : BriefIPAddress
++    @[JSON::Field(key: "primary_ip", type: BriefIPAddress?, nillable: true, emit_null: false)]
++    property primary_ip : BriefIPAddress?
+
+-    @[JSON::Field(key: "config_context", type: JSON::Any, nillable: false, emit_null: false)]
+-    property config_context : JSON::Any
++    @[JSON::Field(key: "config_context", type: JSON::Any?, nillable: true, emit_null: false)]
++    property config_context : JSON::Any?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

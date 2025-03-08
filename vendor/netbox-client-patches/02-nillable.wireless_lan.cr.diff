@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/wireless_lan.cr b/vendor/netbox-client/src/netbox-client/models/wireless_lan.cr
+index 9d418a2..67da93a 100644
+--- a/vendor/netbox-client/src/netbox-client/models/wireless_lan.cr
++++ b/vendor/netbox-client/src/netbox-client/models/wireless_lan.cr
+@@ -35,8 +35,8 @@ module NetboxClient
+     @[JSON::Field(key: "ssid", type: String, nillable: false, emit_null: false)]
+     property ssid : String
+
+-    @[JSON::Field(key: "scope", type: JSON::Any, nillable: false, emit_null: false)]
+-    property scope : JSON::Any
++    @[JSON::Field(key: "scope", type: JSON::Any?, nillable: true, emit_null: false)]
++    property scope : JSON::Any?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

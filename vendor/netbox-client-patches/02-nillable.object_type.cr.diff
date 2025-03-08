@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/object_type.cr b/vendor/netbox-client/src/netbox-client/models/object_type.cr
+index 7b7baef..f806cbd 100644
+--- a/vendor/netbox-client/src/netbox-client/models/object_type.cr
++++ b/vendor/netbox-client/src/netbox-client/models/object_type.cr
+@@ -52,8 +52,8 @@ module NetboxClient
+     @[JSON::Field(key: "is_plugin_model", type: Bool, nillable: false, emit_null: false)]
+     property is_plugin_model : Bool
+
+-    @[JSON::Field(key: "rest_api_endpoint", type: String, nillable: false, emit_null: false)]
+-    property rest_api_endpoint : String
++    @[JSON::Field(key: "rest_api_endpoint", type: String?, nillable: true, emit_null: false)]
++    property rest_api_endpoint : String?
+
+     @[JSON::Field(key: "description", type: String, nillable: false, emit_null: false)]
+     property description : String

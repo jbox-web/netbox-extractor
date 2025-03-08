@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/brief_device_type.cr b/vendor/netbox-client/src/netbox-client/models/brief_device_type.cr
+index 1fc136f..a29cada 100644
+--- a/vendor/netbox-client/src/netbox-client/models/brief_device_type.cr
++++ b/vendor/netbox-client/src/netbox-client/models/brief_device_type.cr
+@@ -38,8 +38,8 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+
+-    @[JSON::Field(key: "device_count", type: Int64, nillable: false, emit_null: false)]
+-    property device_count : Int64
++    @[JSON::Field(key: "device_count", type: Int64?, nillable: true, emit_null: false)]
++    property device_count : Int64?
+
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]

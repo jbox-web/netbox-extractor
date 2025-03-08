@@ -1,0 +1,41 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/vlan.cr b/vendor/netbox-client/src/netbox-client/models/vlan.cr
+index a79e185..e203ede 100644
+--- a/vendor/netbox-client/src/netbox-client/models/vlan.cr
++++ b/vendor/netbox-client/src/netbox-client/models/vlan.cr
+@@ -26,8 +26,8 @@ module NetboxClient
+     @[JSON::Field(key: "url", type: String, nillable: false, emit_null: false)]
+     property url : String
+
+-    @[JSON::Field(key: "display_url", type: String, nillable: false, emit_null: false)]
+-    property display_url : String
++    @[JSON::Field(key: "display_url", type: String?, nillable: true, emit_null: false)]
++    property display_url : String?
+
+     @[JSON::Field(key: "display", type: String, nillable: false, emit_null: false)]
+     property display : String
+@@ -39,17 +39,17 @@ module NetboxClient
+     @[JSON::Field(key: "name", type: String, nillable: false, emit_null: false)]
+     property name : String
+
+-    @[JSON::Field(key: "l2vpn_termination", type: BriefL2VPNTermination, nillable: false, emit_null: false)]
+-    property l2vpn_termination : BriefL2VPNTermination
++    @[JSON::Field(key: "l2vpn_termination", type: BriefL2VPNTermination?, nillable: true, emit_null: false)]
++    property l2vpn_termination : BriefL2VPNTermination?
+
+-    @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+-    property created : Time
++    @[JSON::Field(key: "created", type: Time?, nillable: true, emit_null: false)]
++    property created : Time?
+
+-    @[JSON::Field(key: "last_updated", type: Time, nillable: false, emit_null: false)]
+-    property last_updated : Time
++    @[JSON::Field(key: "last_updated", type: Time?, nillable: true, emit_null: false)]
++    property last_updated : Time?
+
+-    @[JSON::Field(key: "prefix_count", type: Int64, nillable: false, emit_null: false)]
+-    property prefix_count : Int64
++    @[JSON::Field(key: "prefix_count", type: Int64?, nillable: true, emit_null: false)]
++    property prefix_count : Int64?
+
+     # Optional properties
+     @[JSON::Field(key: "site", type: BriefSite?, nillable: true, emit_null: false)]

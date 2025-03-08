@@ -1,0 +1,20 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/brief_module.cr b/vendor/netbox-client/src/netbox-client/models/brief_module.cr
+index cd9df0a..c144a1f 100644
+--- a/vendor/netbox-client/src/netbox-client/models/brief_module.cr
++++ b/vendor/netbox-client/src/netbox-client/models/brief_module.cr
+@@ -29,11 +29,11 @@ module NetboxClient
+     @[JSON::Field(key: "display", type: String, nillable: false, emit_null: false)]
+     property display : String
+
+-    @[JSON::Field(key: "device", type: BriefDevice, nillable: false, emit_null: false)]
+-    property device : BriefDevice
++    @[JSON::Field(key: "device", type: BriefDevice?, nillable: true, emit_null: false)]
++    property device : BriefDevice?
+
+-    @[JSON::Field(key: "module_bay", type: NestedModuleBay, nillable: false, emit_null: false)]
+-    property module_bay : NestedModuleBay
++    @[JSON::Field(key: "module_bay", type: NestedModuleBay?, nillable: true, emit_null: false)]
++    property module_bay : NestedModuleBay?
+
+     # Initializes the object
+     # @param [Hash] attributes Model attributes in the form of hash

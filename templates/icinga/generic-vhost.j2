@@ -1,0 +1,47 @@
+object Host "{{ host }}" {
+  # Base config
+  import   "generic-host"
+  zone     = "{{ icinga_zone }}"
+  address  = "{{ host }}"
+  {%- if notification_period -%}
+  vars.notification_period = "{{ notification_period }}"
+  {%- endif -%}
+
+  # Override default check command
+  check_command = "http"
+
+  {%- if http_ssl -%}
+  vars.http_ssl                 = {{ http_ssl }}
+  {%- else -%}
+  vars.http_ssl                 = true
+  {%- endif -%}
+  vars.http_timeout             = 15
+  {%- if http_check_cert -%}
+  vars.http_check_cert          = {{ http_check_cert }}
+  {%- else -%}
+  vars.http_check_cert          = true
+  {%- endif -%}
+  vars.http_vhost               = "{{ host }}"
+  {%- if http_port -%}
+  vars.http_port                = {{ http_port }}
+  {%- endif -%}
+  {%- if http_address -%}
+  vars.http_address             = "{{ http_address }}"
+  {%- endif -%}
+  {%- if http_uri -%}
+  vars.http_uri                 = "{{ http_uri }}"
+  {%- endif -%}
+  {%- if http_expect -%}
+  vars.http_expect              = "{{ http_expect }}"
+  {%- endif -%}
+  {%- if http_expect_body_regex -%}
+  vars.http_expect_body_regex   = "{{ http_expect_body_regex }}"
+  {%- endif -%}
+  vars.config["check"]["type"]  = "http"
+  vars.config["vhost"]["type"]  = "{{ subdir }}"
+  vars.config["server"]["type"] = "web"
+  vars.config["server"]["zone"] = "{{ icinga_zone }}"
+  {%- if tags -%}
+  vars.config["server"]["tags"] = {{ tags | string | replace("'", "\"") }}
+  {%- endif -%}
+}

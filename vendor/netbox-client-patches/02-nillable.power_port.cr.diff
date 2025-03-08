@@ -1,0 +1,44 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/power_port.cr b/vendor/netbox-client/src/netbox-client/models/power_port.cr
+index 5a1b56d..02eca22 100644
+--- a/vendor/netbox-client/src/netbox-client/models/power_port.cr
++++ b/vendor/netbox-client/src/netbox-client/models/power_port.cr
+@@ -38,27 +38,27 @@ module NetboxClient
+     @[JSON::Field(key: "name", type: String, nillable: false, emit_null: false)]
+     property name : String
+
+-    @[JSON::Field(key: "cable", type: BriefCable, nillable: false, emit_null: false)]
+-    property cable : BriefCable
++    @[JSON::Field(key: "cable", type: BriefCable?, nillable: true, emit_null: false)]
++    property cable : BriefCable?
+
+-    @[JSON::Field(key: "cable_end", type: String, nillable: false, emit_null: false)]
+-    property cable_end : String
++    @[JSON::Field(key: "cable_end", type: String?, nillable: true, emit_null: false)]
++    property cable_end : String?
+
+     @[JSON::Field(key: "link_peers", type: Array(JSON::Any), nillable: false, emit_null: false)]
+     property link_peers : Array(JSON::Any)
+
+     # Return the type of the peer link terminations, or None.
+-    @[JSON::Field(key: "link_peers_type", type: String, nillable: false, emit_null: false)]
+-    property link_peers_type : String
++    @[JSON::Field(key: "link_peers_type", type: String?, nillable: true, emit_null: false)]
++    property link_peers_type : String?
+
+-    @[JSON::Field(key: "connected_endpoints", type: Array(JSON::Any), nillable: false, emit_null: false)]
+-    property connected_endpoints : Array(JSON::Any)
++    @[JSON::Field(key: "connected_endpoints", type: Array(JSON::Any)?, nillable: true, emit_null: false)]
++    property connected_endpoints : Array(JSON::Any)?
+
+-    @[JSON::Field(key: "connected_endpoints_type", type: String, nillable: false, emit_null: false)]
+-    property connected_endpoints_type : String
++    @[JSON::Field(key: "connected_endpoints_type", type: String?, nillable: true, emit_null: false)]
++    property connected_endpoints_type : String?
+
+-    @[JSON::Field(key: "connected_endpoints_reachable", type: Bool, nillable: false, emit_null: false)]
+-    property connected_endpoints_reachable : Bool
++    @[JSON::Field(key: "connected_endpoints_reachable", type: Bool?, nillable: true, emit_null: false)]
++    property connected_endpoints_reachable : Bool?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

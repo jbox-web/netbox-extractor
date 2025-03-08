@@ -1,0 +1,13 @@
+diff --git a/vendor/netbox-client/shard.yml b/vendor/netbox-client/shard.yml
+index e88fea8..ab60669 100644
+--- a/vendor/netbox-client/shard.yml
++++ b/vendor/netbox-client/shard.yml
+@@ -15,7 +15,7 @@ dependencies:
+     github: Sija/any_hash.cr
+   crest:
+     github: mamantoha/crest
+-    version: ~> 1.3.13
++    version: ~> 1.6.0
+ 
+ development_dependencies:
+   ameba:

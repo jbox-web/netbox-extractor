@@ -1,0 +1,20 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/brief_role.cr b/vendor/netbox-client/src/netbox-client/models/brief_role.cr
+index 7e3bd7d..fdd08b3 100644
+--- a/vendor/netbox-client/src/netbox-client/models/brief_role.cr
++++ b/vendor/netbox-client/src/netbox-client/models/brief_role.cr
+@@ -35,11 +35,11 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+
+-    @[JSON::Field(key: "prefix_count", type: Int64, nillable: false, emit_null: false)]
+-    property prefix_count : Int64
++    @[JSON::Field(key: "prefix_count", type: Int64?, nillable: true, emit_null: false)]
++    property prefix_count : Int64?
+
+-    @[JSON::Field(key: "vlan_count", type: Int64, nillable: false, emit_null: false)]
+-    property vlan_count : Int64
++    @[JSON::Field(key: "vlan_count", type: Int64?, nillable: true, emit_null: false)]
++    property vlan_count : Int64?
+
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]

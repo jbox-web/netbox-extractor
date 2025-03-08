@@ -1,0 +1,41 @@
+name: netbox-extractor
+
+version: 1.0.0
+
+crystal: '>= 1.18.0'
+
+license: MIT
+
+authors:
+  - Nicolas Rodriguez <nico@nicoladmin.fr>
+
+targets:
+  netbox-extractor:
+    main: src/netbox-extractor.cr
+
+dependencies:
+  admiral:
+    github: jwaldrip/admiral.cr
+  any_hash:
+    github: Sija/any_hash.cr
+  baked_file_system:
+    github: schovi/baked_file_system
+    version: 0.13.0
+  cr-color-logging:
+    github: vici37/cr-color-logging
+  crinja:
+    github: straight-shoota/crinja
+  crystal-env:
+    github: crystal-lang/crystal-env
+    branch: master
+  dotenv:
+    github: gdotdesign/cr-dotenv
+  netbox-client:
+    path: vendor/netbox-client
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+  spectator:
+    gitlab: arctic-fox/spectator
+    version: ~> 0.12.0

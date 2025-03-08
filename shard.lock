@@ -1,0 +1,54 @@
+version: 2.0
+shards:
+  admiral:
+    git: https://github.com/jwaldrip/admiral.cr.git
+    version: 1.12.1
+
+  ameba:
+    git: https://github.com/crystal-ameba/ameba.git
+    version: 1.6.4
+
+  any_hash:
+    git: https://github.com/sija/any_hash.cr.git
+    version: 0.2.5
+
+  baked_file_system:
+    git: https://github.com/schovi/baked_file_system.git
+    version: 0.13.0
+
+  cr-color-logging:
+    git: https://github.com/vici37/cr-color-logging.git
+    version: 1.0.0+git.commit.268ed66748540fdb197af9f5d35e09cec64dbe1a
+
+  crest:
+    git: https://github.com/mamantoha/crest.git
+    version: 1.6.0
+
+  crinja:
+    git: https://github.com/straight-shoota/crinja.git
+    version: 0.8.1
+
+  crystal-env:
+    git: https://github.com/crystal-lang/crystal-env.git
+    version: 0.1.0+git.commit.05a1d92cfbb11a75a0077323b9631a467b7a6b91
+
+  dotenv:
+    git: https://github.com/gdotdesign/cr-dotenv.git
+    version: 1.0.0
+
+  http-client-digest_auth:
+    git: https://github.com/mamantoha/http-client-digest_auth.git
+    version: 0.6.0
+
+  http_proxy:
+    git: https://github.com/mamantoha/http_proxy.git
+    version: 0.13.1
+
+  netbox-client:
+    path: vendor/netbox-client
+    version: 1.0.0
+
+  spectator:
+    git: https://gitlab.com/arctic-fox/spectator.git
+    version: 0.12.2
+

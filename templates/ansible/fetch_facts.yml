@@ -1,0 +1,13 @@
+---
+- name: Gather facts from servers
+  hosts: all
+  gather_facts: true
+
+  tasks:
+
+    ############
+    # HOSTNAME #
+    ############
+
+    - name: Fetch Ansible facts
+      shell: echo "Fetching Ansible facts"

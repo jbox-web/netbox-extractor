@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/brief_rack_role.cr b/vendor/netbox-client/src/netbox-client/models/brief_rack_role.cr
+index 6ed28d1..23d957f 100644
+--- a/vendor/netbox-client/src/netbox-client/models/brief_rack_role.cr
++++ b/vendor/netbox-client/src/netbox-client/models/brief_rack_role.cr
+@@ -35,8 +35,8 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+
+-    @[JSON::Field(key: "rack_count", type: Int64, nillable: false, emit_null: false)]
+-    property rack_count : Int64
++    @[JSON::Field(key: "rack_count", type: Int64?, nillable: true, emit_null: false)]
++    property rack_count : Int64?
+
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]

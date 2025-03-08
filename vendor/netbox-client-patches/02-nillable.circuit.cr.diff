@@ -1,0 +1,20 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/circuit.cr b/vendor/netbox-client/src/netbox-client/models/circuit.cr
+index e6daa31..e1131de 100644
+--- a/vendor/netbox-client/src/netbox-client/models/circuit.cr
++++ b/vendor/netbox-client/src/netbox-client/models/circuit.cr
+@@ -37,11 +37,11 @@ module NetboxClient
+     @[JSON::Field(key: "type", type: BriefCircuitType, nillable: false, emit_null: false)]
+     property _type : BriefCircuitType
+
+-    @[JSON::Field(key: "termination_a", type: CircuitCircuitTermination, nillable: false, emit_null: false)]
+-    property termination_a : CircuitCircuitTermination
++    @[JSON::Field(key: "termination_a", type: CircuitCircuitTermination?, nillable: true, emit_null: false)]
++    property termination_a : CircuitCircuitTermination?
+
+-    @[JSON::Field(key: "termination_z", type: CircuitCircuitTermination, nillable: false, emit_null: false)]
+-    property termination_z : CircuitCircuitTermination
++    @[JSON::Field(key: "termination_z", type: CircuitCircuitTermination?, nillable: true, emit_null: false)]
++    property termination_z : CircuitCircuitTermination?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

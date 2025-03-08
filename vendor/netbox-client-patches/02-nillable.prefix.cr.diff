@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/prefix.cr b/vendor/netbox-client/src/netbox-client/models/prefix.cr
+index 01a0572..e9272c3 100644
+--- a/vendor/netbox-client/src/netbox-client/models/prefix.cr
++++ b/vendor/netbox-client/src/netbox-client/models/prefix.cr
+@@ -38,8 +38,8 @@ module NetboxClient
+     @[JSON::Field(key: "prefix", type: String, nillable: false, emit_null: false)]
+     property prefix : String
+
+-    @[JSON::Field(key: "scope", type: JSON::Any, nillable: false, emit_null: false)]
+-    property scope : JSON::Any
++    @[JSON::Field(key: "scope", type: JSON::Any?, nillable: true, emit_null: false)]
++    property scope : JSON::Any?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

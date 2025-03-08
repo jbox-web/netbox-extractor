@@ -1,0 +1,97 @@
+---
+name: CI
+
+permissions: {}
+
+on:
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    branches:
+      - '**'
+    paths-ignore:
+      - "**.md"
+  schedule:
+    - cron: '0 4 1 * *'
+  # Run workflow manually
+  workflow_dispatch:
+
+jobs:
+  ameba:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: 1.18.2
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run static code analysis
+        run: make ameba
+
+  test_linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: 1.18.2
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run tests
+        run: make spec
+
+  test_macos_arm64:
+    runs-on: macos-26
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: 1.18.2
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run tests
+        run: make spec
+
+  test_macos_amd64:
+    runs-on: macos-26-intel
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: 1.18.2
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run tests
+        run: make spec

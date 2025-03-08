@@ -1,0 +1,36 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/cluster.cr b/vendor/netbox-client/src/netbox-client/models/cluster.cr
+index d270b1e..1038e7d 100644
+--- a/vendor/netbox-client/src/netbox-client/models/cluster.cr
++++ b/vendor/netbox-client/src/netbox-client/models/cluster.cr
+@@ -38,8 +38,8 @@ module NetboxClient
+     @[JSON::Field(key: "type", type: BriefClusterType, nillable: false, emit_null: false)]
+     property _type : BriefClusterType
+
+-    @[JSON::Field(key: "scope", type: JSON::Any, nillable: false, emit_null: false)]
+-    property scope : JSON::Any
++    @[JSON::Field(key: "scope", type: JSON::Any?, nillable: true, emit_null: false)]
++    property scope : JSON::Any?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time
+@@ -53,14 +53,14 @@ module NetboxClient
+     @[JSON::Field(key: "virtualmachine_count", type: Int64, nillable: false, emit_null: false)]
+     property virtualmachine_count : Int64
+
+-    @[JSON::Field(key: "allocated_vcpus", type: Float64, nillable: false, emit_null: false)]
+-    property allocated_vcpus : Float64
++    @[JSON::Field(key: "allocated_vcpus", type: Float64?, nillable: true, emit_null: false)]
++    property allocated_vcpus : Float64?
+
+-    @[JSON::Field(key: "allocated_memory", type: Int32, nillable: false, emit_null: false)]
+-    property allocated_memory : Int32
++    @[JSON::Field(key: "allocated_memory", type: Int32?, nillable: true, emit_null: false)]
++    property allocated_memory : Int32?
+
+-    @[JSON::Field(key: "allocated_disk", type: Int32, nillable: false, emit_null: false)]
+-    property allocated_disk : Int32
++    @[JSON::Field(key: "allocated_disk", type: Int32?, nillable: true, emit_null: false)]
++    property allocated_disk : Int32?
+
+     # Optional properties
+     @[JSON::Field(key: "group", type: BriefClusterGroup?, nillable: true, emit_null: false)]
