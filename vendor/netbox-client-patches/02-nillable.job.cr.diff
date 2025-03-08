@@ -1,0 +1,31 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/job.cr b/vendor/netbox-client/src/netbox-client/models/job.cr
+index 169d4c9..5a31bef 100644
+--- a/vendor/netbox-client/src/netbox-client/models/job.cr
++++ b/vendor/netbox-client/src/netbox-client/models/job.cr
+@@ -31,11 +31,11 @@ module NetboxClient
+     @[JSON::Field(key: "display", type: String, nillable: false, emit_null: false)]
+     property display : String
+
+-    @[JSON::Field(key: "object_type", type: String, nillable: false, emit_null: false)]
+-    property object_type : String
++    @[JSON::Field(key: "object_type", type: String?, nillable: true, emit_null: false)]
++    property object_type : String?
+
+-    @[JSON::Field(key: "object", type: JSON::Any, nillable: false, emit_null: false)]
+-    property object : JSON::Any
++    @[JSON::Field(key: "object", type: JSON::Any?, nillable: true, emit_null: false)]
++    property object : JSON::Any?
+
+     @[JSON::Field(key: "name", type: String, nillable: false, emit_null: false)]
+     property name : String
+@@ -46,8 +46,8 @@ module NetboxClient
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time
+
+-    @[JSON::Field(key: "user", type: BriefUser, nillable: false, emit_null: false)]
+-    property user : BriefUser
++    @[JSON::Field(key: "user", type: BriefUser?, nillable: true, emit_null: false)]
++    property user : BriefUser?
+
+     @[JSON::Field(key: "error", type: String, nillable: false, emit_null: false)]
+     property error : String

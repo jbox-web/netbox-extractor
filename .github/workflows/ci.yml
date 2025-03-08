@@ -1,0 +1,66 @@
+---
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  schedule:
+    - cron: '0 4 1 * *'
+  # Run workflow manually
+  workflow_dispatch:
+
+jobs:
+  ameba:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: 1.18.2
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run static code analysis
+        run: make ameba
+
+  test_linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: 1.18.2
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run tests
+        run: make spec
+
+  test_macos:
+    runs-on: macos-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: 1.18.2
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run tests
+        run: make spec

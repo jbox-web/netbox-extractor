@@ -1,0 +1,30 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/cable_termination.cr b/vendor/netbox-client/src/netbox-client/models/cable_termination.cr
+index 2ac6fd0..889cf33 100644
+--- a/vendor/netbox-client/src/netbox-client/models/cable_termination.cr
++++ b/vendor/netbox-client/src/netbox-client/models/cable_termination.cr
+@@ -45,8 +45,8 @@ module NetboxClient
+     @[JSON::Field(key: "termination", type: JSON::Any, nillable: false, emit_null: false)]
+     property termination : JSON::Any
+
+-    @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+-    property created : Time
++    @[JSON::Field(key: "created", type: Time?, nillable: true, emit_null: false)]
++    property created : Time?
+
+     @[JSON::Field(key: "last_updated", type: Time, nillable: false, emit_null: false)]
+     property last_updated : Time
+diff --git a/vendor/netbox-client/src/netbox-client/models/cable_termination.cr b/vendor/netbox-client/src/netbox-client/models/cable_termination.cr
+index 5a8882c..661f24f 100644
+--- a/vendor/netbox-client/src/netbox-client/models/cable_termination.cr
++++ b/vendor/netbox-client/src/netbox-client/models/cable_termination.cr
+@@ -43,8 +43,8 @@ module NetboxClient
+     @[JSON::Field(key: "created", type: Time?, nillable: true, emit_null: false)]
+     property created : Time?
+
+-    @[JSON::Field(key: "last_updated", type: Time, nillable: false, emit_null: false)]
+-    property last_updated : Time
++    @[JSON::Field(key: "last_updated", type: Time?, nillable: true, emit_null: false)]
++    property last_updated : Time?
+
+     abstract class EnumAttributeValidator
+       def valid?(value)

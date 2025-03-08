@@ -1,0 +1,20 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/config_context.cr b/vendor/netbox-client/src/netbox-client/models/config_context.cr
+index 5dab670..b711716 100644
+--- a/vendor/netbox-client/src/netbox-client/models/config_context.cr
++++ b/vendor/netbox-client/src/netbox-client/models/config_context.cr
+@@ -39,11 +39,11 @@ module NetboxClient
+     @[JSON::Field(key: "data_path", type: String, nillable: false, emit_null: false)]
+     property data_path : String
+
+-    @[JSON::Field(key: "data_file", type: BriefDataFile, nillable: false, emit_null: false)]
+-    property data_file : BriefDataFile
++    @[JSON::Field(key: "data_file", type: BriefDataFile?, nillable: true, emit_null: false)]
++    property data_file : BriefDataFile?
+
+-    @[JSON::Field(key: "data_synced", type: Time, nillable: false, emit_null: false)]
+-    property data_synced : Time
++    @[JSON::Field(key: "data_synced", type: Time?, nillable: true, emit_null: false)]
++    property data_synced : Time?
+
+     @[JSON::Field(key: "data", type: JSON::Any, nillable: false, emit_null: false)]
+     property data : JSON::Any

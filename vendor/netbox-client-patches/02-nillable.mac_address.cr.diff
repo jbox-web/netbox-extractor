@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/mac_address.cr b/vendor/netbox-client/src/netbox-client/models/mac_address.cr
+index 93375fe..d8f4ee3 100644
+--- a/vendor/netbox-client/src/netbox-client/models/mac_address.cr
++++ b/vendor/netbox-client/src/netbox-client/models/mac_address.cr
+@@ -35,8 +35,8 @@ module NetboxClient
+     @[JSON::Field(key: "mac_address", type: String, nillable: false, emit_null: false)]
+     property mac_address : String
+
+-    @[JSON::Field(key: "assigned_object", type: JSON::Any, nillable: false, emit_null: false)]
+-    property assigned_object : JSON::Any
++    @[JSON::Field(key: "assigned_object", type: JSON::Any?, nillable: true, emit_null: false)]
++    property assigned_object : JSON::Any?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

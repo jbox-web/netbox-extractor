@@ -1,0 +1,62 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/interface.cr b/vendor/netbox-client/src/netbox-client/models/interface.cr
+index ec88655..fdeab99 100644
+--- a/vendor/netbox-client/src/netbox-client/models/interface.cr
++++ b/vendor/netbox-client/src/netbox-client/models/interface.cr
+@@ -41,39 +41,39 @@ module NetboxClient
+     @[JSON::Field(key: "type", type: InterfaceType, nillable: false, emit_null: false)]
+     property _type : InterfaceType
+
+-    @[JSON::Field(key: "mac_address", type: String, nillable: false, emit_null: false)]
+-    property mac_address : String
++    @[JSON::Field(key: "mac_address", type: String?, nillable: true, emit_null: false)]
++    property mac_address : String?
+
+     @[JSON::Field(key: "mac_addresses", type: Array(BriefMACAddress), nillable: false, emit_null: false)]
+     property mac_addresses : Array(BriefMACAddress)
+
+-    @[JSON::Field(key: "cable", type: BriefCable, nillable: false, emit_null: false)]
+-    property cable : BriefCable
++    @[JSON::Field(key: "cable", type: BriefCable?, nillable: true, emit_null: false)]
++    property cable : BriefCable?
+
+-    @[JSON::Field(key: "cable_end", type: String, nillable: false, emit_null: false)]
+-    property cable_end : String
++    @[JSON::Field(key: "cable_end", type: String?, nillable: true, emit_null: false)]
++    property cable_end : String?
+
+-    @[JSON::Field(key: "wireless_link", type: NestedWirelessLink, nillable: false, emit_null: false)]
+-    property wireless_link : NestedWirelessLink
++    @[JSON::Field(key: "wireless_link", type: NestedWirelessLink?, nillable: true, emit_null: false)]
++    property wireless_link : NestedWirelessLink?
+
+     @[JSON::Field(key: "link_peers", type: Array(JSON::Any), nillable: false, emit_null: false)]
+     property link_peers : Array(JSON::Any)
+
+     # Return the type of the peer link terminations, or None.
+-    @[JSON::Field(key: "link_peers_type", type: String, nillable: false, emit_null: false)]
+-    property link_peers_type : String
++    @[JSON::Field(key: "link_peers_type", type: String?, nillable: true, emit_null: false)]
++    property link_peers_type : String?
+
+-    @[JSON::Field(key: "l2vpn_termination", type: BriefL2VPNTermination, nillable: false, emit_null: false)]
+-    property l2vpn_termination : BriefL2VPNTermination
++    @[JSON::Field(key: "l2vpn_termination", type: BriefL2VPNTermination?, nillable: true, emit_null: false)]
++    property l2vpn_termination : BriefL2VPNTermination?
+
+-    @[JSON::Field(key: "connected_endpoints", type: Array(JSON::Any), nillable: false, emit_null: false)]
+-    property connected_endpoints : Array(JSON::Any)
++    @[JSON::Field(key: "connected_endpoints", type: Array(JSON::Any)?, nillable: true, emit_null: false)]
++    property connected_endpoints : Array(JSON::Any)?
+
+-    @[JSON::Field(key: "connected_endpoints_type", type: String, nillable: false, emit_null: false)]
+-    property connected_endpoints_type : String
++    @[JSON::Field(key: "connected_endpoints_type", type: String?, nillable: true, emit_null: false)]
++    property connected_endpoints_type : String?
+
+-    @[JSON::Field(key: "connected_endpoints_reachable", type: Bool, nillable: false, emit_null: false)]
+-    property connected_endpoints_reachable : Bool
++    @[JSON::Field(key: "connected_endpoints_reachable", type: Bool?, nillable: true, emit_null: false)]
++    property connected_endpoints_reachable : Bool?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

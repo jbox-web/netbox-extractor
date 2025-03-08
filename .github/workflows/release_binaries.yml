@@ -1,0 +1,54 @@
+---
+name: Release Binaries
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release_linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v5
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build static binaries
+        run: make release-static
+
+      - name: Create release and publish assets
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "packages/*"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+
+  release_macos:
+    runs-on: macos-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: 1.18.2
+
+      - name: Install dependencies
+        run: make deps-release
+
+      - name: Build binary
+        run: make release OUTPUT_FILE=netbox-extractor-darwin-amd64
+
+      - name: Create release and publish assets
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "bin/*"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true

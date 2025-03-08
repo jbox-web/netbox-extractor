@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/ip_address.cr b/vendor/netbox-client/src/netbox-client/models/ip_address.cr
+index c547765..0393d54 100644
+--- a/vendor/netbox-client/src/netbox-client/models/ip_address.cr
++++ b/vendor/netbox-client/src/netbox-client/models/ip_address.cr
+@@ -38,8 +38,8 @@ module NetboxClient
+     @[JSON::Field(key: "address", type: String, nillable: false, emit_null: false)]
+     property address : String
+
+-    @[JSON::Field(key: "assigned_object", type: JSON::Any, nillable: false, emit_null: false)]
+-    property assigned_object : JSON::Any
++    @[JSON::Field(key: "assigned_object", type: JSON::Any?, nillable: true, emit_null: false)]
++    property assigned_object : JSON::Any?
+
+     @[JSON::Field(key: "nat_outside", type: Array(NestedIPAddress), nillable: false, emit_null: false)]
+     property nat_outside : Array(NestedIPAddress)

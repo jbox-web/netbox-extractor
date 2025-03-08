@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/object_change.cr b/vendor/netbox-client/src/netbox-client/models/object_change.cr
+index 04df24f..82def12 100644
+--- a/vendor/netbox-client/src/netbox-client/models/object_change.cr
++++ b/vendor/netbox-client/src/netbox-client/models/object_change.cr
+@@ -61,8 +61,8 @@ module NetboxClient
+     @[JSON::Field(key: "prechange_data", type: JSON::Any, nillable: false, emit_null: false)]
+     property prechange_data : JSON::Any
+
+-    @[JSON::Field(key: "postchange_data", type: JSON::Any, nillable: false, emit_null: false)]
+-    property postchange_data : JSON::Any
++    @[JSON::Field(key: "postchange_data", type: JSON::Any?, nillable: true, emit_null: false)]
++    property postchange_data : JSON::Any?
+
+     # Initializes the object
+     # @param [Hash] attributes Model attributes in the form of hash

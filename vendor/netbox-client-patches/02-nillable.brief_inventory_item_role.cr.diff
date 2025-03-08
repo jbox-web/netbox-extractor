@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/brief_inventory_item_role.cr b/vendor/netbox-client/src/netbox-client/models/brief_inventory_item_role.cr
+index 86de006f..61bce9bc 100644
+--- a/vendor/netbox-client/src/netbox-client/models/brief_inventory_item_role.cr
++++ b/vendor/netbox-client/src/netbox-client/models/brief_inventory_item_role.cr
+@@ -30,8 +30,8 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+
+-    @[JSON::Field(key: "inventoryitem_count", type: Int64, nillable: false, emit_null: false)]
+-    property inventoryitem_count : Int64
++    @[JSON::Field(key: "inventoryitem_count", type: Int64?, nillable: false, emit_null: false)]
++    property inventoryitem_count : Int64?
+
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]

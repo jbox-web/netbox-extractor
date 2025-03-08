@@ -1,0 +1,26 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/group.cr b/vendor/netbox-client/src/netbox-client/models/group.cr
+index a7ee1f2..c92d404 100644
+--- a/vendor/netbox-client/src/netbox-client/models/group.cr
++++ b/vendor/netbox-client/src/netbox-client/models/group.cr
+@@ -26,8 +26,8 @@ module NetboxClient
+     @[JSON::Field(key: "url", type: String, nillable: false, emit_null: false)]
+     property url : String
+
+-    @[JSON::Field(key: "display_url", type: String, nillable: false, emit_null: false)]
+-    property display_url : String
++    @[JSON::Field(key: "display_url", type: String?, nillable: true, emit_null: false)]
++    property display_url : String?
+
+     @[JSON::Field(key: "display", type: String, nillable: false, emit_null: false)]
+     property display : String
+@@ -35,8 +35,8 @@ module NetboxClient
+     @[JSON::Field(key: "name", type: String, nillable: false, emit_null: false)]
+     property name : String
+
+-    @[JSON::Field(key: "user_count", type: Int32, nillable: false, emit_null: false)]
+-    property user_count : Int32
++    @[JSON::Field(key: "user_count", type: Int32?, nillable: true, emit_null: false)]
++    property user_count : Int32?
+
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]

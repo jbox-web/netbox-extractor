@@ -1,0 +1,23 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/vm_interface.cr b/vendor/netbox-client/src/netbox-client/models/vm_interface.cr
+index 7c744b9..5ce6962 100644
+--- a/vendor/netbox-client/src/netbox-client/models/vm_interface.cr
++++ b/vendor/netbox-client/src/netbox-client/models/vm_interface.cr
+@@ -38,14 +38,14 @@ module NetboxClient
+     @[JSON::Field(key: "name", type: String, nillable: false, emit_null: false)]
+     property name : String
+
+-    @[JSON::Field(key: "mac_address", type: String, nillable: false, emit_null: false)]
+-    property mac_address : String
++    @[JSON::Field(key: "mac_address", type: String?, nillable: true, emit_null: false)]
++    property mac_address : String?
+
+     @[JSON::Field(key: "mac_addresses", type: Array(BriefMACAddress), nillable: false, emit_null: false)]
+     property mac_addresses : Array(BriefMACAddress)
+
+-    @[JSON::Field(key: "l2vpn_termination", type: BriefL2VPNTermination, nillable: false, emit_null: false)]
+-    property l2vpn_termination : BriefL2VPNTermination
++    @[JSON::Field(key: "l2vpn_termination", type: BriefL2VPNTermination?, nillable: true, emit_null: false)]
++    property l2vpn_termination : BriefL2VPNTermination?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/available_ip.cr b/vendor/netbox-client/src/netbox-client/models/available_ip.cr
+index 99f9bdbb..2caeaf37 100644
+--- a/vendor/netbox-client/src/netbox-client/models/available_ip.cr
++++ b/vendor/netbox-client/src/netbox-client/models/available_ip.cr
+@@ -21,8 +21,8 @@ module NetboxClient
+     @[JSON::Field(key: "address", type: String, nillable: false, emit_null: false)]
+     property address : String
+
+-    @[JSON::Field(key: "vrf", type: BriefVRF, nillable: false, emit_null: false)]
+-    property vrf : BriefVRF
++    @[JSON::Field(key: "vrf", type: BriefVRF?, nillable: true, emit_null: false)]
++    property vrf : BriefVRF?
+
+     # Optional properties
+     @[JSON::Field(key: "description", type: String?, nillable: true, emit_null: false)]

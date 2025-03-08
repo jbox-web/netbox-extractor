@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/brief_vrf.cr b/vendor/netbox-client/src/netbox-client/models/brief_vrf.cr
+index b3892ff0..f2418965 100644
+--- a/vendor/netbox-client/src/netbox-client/models/brief_vrf.cr
++++ b/vendor/netbox-client/src/netbox-client/models/brief_vrf.cr
+@@ -27,8 +27,8 @@ module NetboxClient
+     @[JSON::Field(key: "name", type: String, nillable: false, emit_null: false)]
+     property name : String
+
+-    @[JSON::Field(key: "prefix_count", type: Int64, nillable: false, emit_null: false)]
+-    property prefix_count : Int64
++    @[JSON::Field(key: "prefix_count", type: Int64?, nillable: true, emit_null: false)]
++    property prefix_count : Int64?
+
+     # Optional properties
+     # Unique route distinguisher (as defined in RFC 4364)

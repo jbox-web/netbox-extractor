@@ -1,0 +1,134 @@
+---
+# Logger config
+logger:
+  level: debug
+  log_file: stdout
+
+# Netbox config
+netbox:
+  http_scheme: https
+  hostname: "<hostname>"
+  port: 443
+  api_token: "<token>"
+  debug: false
+  fetch_limit: 250
+
+# Ansible global config (will apply on all sites)
+ansible:
+  inventories_dir: ./generated/inventories
+  fetch_facts:
+    fork_limit: 30
+    exclude_tags:
+      - check-only-ping
+      - ansible-nofacts
+
+# Icinga global config (will apply on all sites)
+icinga:
+  zones_dir: ./generated/icinga2/zones.d
+
+# Sites config
+sites:
+  - name: DC1
+    id: dc1
+
+    # Don't manage these hosts (with Ansible or icinga)
+    exclude_objects:
+      # Not managed: tests
+      - test1.localdomain
+      - test2.localdomain
+      - test3.localdomain
+
+    # Ansible site config
+    ansible:
+      # Generate Ansible inventories for this Netbox devices
+      include_device_roles:
+        - name: hypervisor-proxmox
+        - name: server-linux
+          filename: "physical-linux"
+
+      # Generate Ansible inventories for this Netbox virtual machines
+      include_vm_roles:
+        - name: virtual-machine-proxmox
+          os: linux
+          filename: "virtual-proxmox-linux"
+
+      # Fetch Ansible facts for these inventories
+      fetch_facts:
+        inventories:
+          - hypervisor-proxmox.yml
+          - physical-linux.yml
+          - virtual-proxmox-linux.yml
+
+    # Icinga site config
+    icinga:
+      # Generate Icinga config files for this Netbox devices
+      include_device_roles:
+        - name: hypervisor-proxmox
+        - name: storage-netapp
+        - name: network-bmc
+        - name: network-firewall
+        - name: server-linux
+          filename: "physical-linux"
+
+      # Generate Icinga config files for this Netbox virtual machines
+      include_vm_roles:
+        - name: virtual-machine-proxmox
+          os: linux
+          filename: "virtual-proxmox-linux"
+
+        - name: virtual-machine-proxmox
+          os: windows
+          filename: "virtual-proxmox-windows"
+
+      nagios_username: <username>
+      nagios_password: <password>
+
+      checks_config:
+        - host: foo.localdomain
+          check_type: snmp
+
+          check_postgres:
+            username: <username>
+            password: <password>
+            instances:
+              - name: <instance name>
+                version: <instance pg version>
+                port: <instance port>
+                dbname: <db name>
+
+          check_rabbit:
+            username: <username>
+            password: <password>
+            node: <node name>
+            queues:
+              - name: <queue name>
+                warning: <queue warning>
+                critical: <queue critical>
+
+          check_drac:
+            exclude_checks:
+              - BATTERY
+
+          check_mysql:
+            username: <username>
+            password: <password>
+            check_slave: true
+
+          check_netapp:
+            check_api:
+              base_url: <url>
+              username: <username>
+              password: <password>
+            aggregates:
+              warning: 87
+              critical: 90
+            volumes:
+              - /vol/nfs_vol1
+              - /vol/nfs_vol2
+            exclude_checks:
+              - HA
+              - NVRAM
+              - TEMP
+              - FAN
+              - PS
+              - SNAPSHOT

@@ -1,0 +1,86 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/device_type.cr b/vendor/netbox-client/src/netbox-client/models/device_type.cr
+index 8fcfd72..ec36b29 100644
+--- a/vendor/netbox-client/src/netbox-client/models/device_type.cr
++++ b/vendor/netbox-client/src/netbox-client/models/device_type.cr
+@@ -26,8 +26,8 @@ module NetboxClient
+     @[JSON::Field(key: "url", type: String, nillable: false, emit_null: false)]
+     property url : String
+
+-    @[JSON::Field(key: "display_url", type: String, nillable: false, emit_null: false)]
+-    property display_url : String
++    @[JSON::Field(key: "display_url", type: String?, nillable: true, emit_null: false)]
++    property display_url : String?
+
+     @[JSON::Field(key: "display", type: String, nillable: false, emit_null: false)]
+     property display : String
+@@ -41,44 +41,44 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+
+-    @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+-    property created : Time
++    @[JSON::Field(key: "created", type: Time?, nillable: true, emit_null: false)]
++    property created : Time?
+
+-    @[JSON::Field(key: "last_updated", type: Time, nillable: false, emit_null: false)]
+-    property last_updated : Time
++    @[JSON::Field(key: "last_updated", type: Time?, nillable: true, emit_null: false)]
++    property last_updated : Time?
+
+-    @[JSON::Field(key: "device_count", type: Int64, nillable: false, emit_null: false)]
+-    property device_count : Int64
++    @[JSON::Field(key: "device_count", type: Int64?, nillable: true, emit_null: false)]
++    property device_count : Int64?
+
+-    @[JSON::Field(key: "console_port_template_count", type: Int32, nillable: false, emit_null: false)]
+-    property console_port_template_count : Int32
++    @[JSON::Field(key: "console_port_template_count", type: Int32?, nillable: true, emit_null: false)]
++    property console_port_template_count : Int32?
+
+-    @[JSON::Field(key: "console_server_port_template_count", type: Int32, nillable: false, emit_null: false)]
+-    property console_server_port_template_count : Int32
++    @[JSON::Field(key: "console_server_port_template_count", type: Int32?, nillable: true, emit_null: false)]
++    property console_server_port_template_count : Int32?
+
+-    @[JSON::Field(key: "power_port_template_count", type: Int32, nillable: false, emit_null: false)]
+-    property power_port_template_count : Int32
++    @[JSON::Field(key: "power_port_template_count", type: Int32?, nillable: true, emit_null: false)]
++    property power_port_template_count : Int32?
+
+-    @[JSON::Field(key: "power_outlet_template_count", type: Int32, nillable: false, emit_null: false)]
+-    property power_outlet_template_count : Int32
++    @[JSON::Field(key: "power_outlet_template_count", type: Int32?, nillable: true, emit_null: false)]
++    property power_outlet_template_count : Int32?
+
+-    @[JSON::Field(key: "interface_template_count", type: Int32, nillable: false, emit_null: false)]
+-    property interface_template_count : Int32
++    @[JSON::Field(key: "interface_template_count", type: Int32?, nillable: true, emit_null: false)]
++    property interface_template_count : Int32?
+
+-    @[JSON::Field(key: "front_port_template_count", type: Int32, nillable: false, emit_null: false)]
+-    property front_port_template_count : Int32
++    @[JSON::Field(key: "front_port_template_count", type: Int32?, nillable: true, emit_null: false)]
++    property front_port_template_count : Int32?
+
+-    @[JSON::Field(key: "rear_port_template_count", type: Int32, nillable: false, emit_null: false)]
+-    property rear_port_template_count : Int32
++    @[JSON::Field(key: "rear_port_template_count", type: Int32?, nillable: true, emit_null: false)]
++    property rear_port_template_count : Int32?
+
+-    @[JSON::Field(key: "device_bay_template_count", type: Int32, nillable: false, emit_null: false)]
+-    property device_bay_template_count : Int32
++    @[JSON::Field(key: "device_bay_template_count", type: Int32?, nillable: true, emit_null: false)]
++    property device_bay_template_count : Int32?
+
+-    @[JSON::Field(key: "module_bay_template_count", type: Int32, nillable: false, emit_null: false)]
+-    property module_bay_template_count : Int32
++    @[JSON::Field(key: "module_bay_template_count", type: Int32?, nillable: true, emit_null: false)]
++    property module_bay_template_count : Int32?
+
+-    @[JSON::Field(key: "inventory_item_template_count", type: Int32, nillable: false, emit_null: false)]
+-    property inventory_item_template_count : Int32
++    @[JSON::Field(key: "inventory_item_template_count", type: Int32?, nillable: true, emit_null: false)]
++    property inventory_item_template_count : Int32?
+
+     # Optional properties
+     @[JSON::Field(key: "default_platform", type: BriefPlatform?, nillable: true, emit_null: false)]

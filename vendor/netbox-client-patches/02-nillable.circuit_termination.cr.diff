@@ -1,0 +1,45 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr b/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr
+index fdea46f..1779952 100644
+--- a/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr
++++ b/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr
+@@ -42,8 +42,8 @@ module NetboxClient
+     @[JSON::Field(key: "termination", type: JSON::Any, nillable: false, emit_null: false)]
+     property termination : JSON::Any
+
+-    @[JSON::Field(key: "cable", type: BriefCable, nillable: false, emit_null: false)]
+-    property cable : BriefCable
++    @[JSON::Field(key: "cable", type: BriefCable?, nillable: true, emit_null: false)]
++    property cable : BriefCable?
+
+     @[JSON::Field(key: "cable_end", type: String, nillable: false, emit_null: false)]
+     property cable_end : String
+diff --git a/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr b/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr
+index fe924b8..eabcca3 100644
+--- a/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr
++++ b/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr
+@@ -40,8 +40,8 @@ module NetboxClient
+     @[JSON::Field(key: "cable", type: BriefCable?, nillable: true, emit_null: false)]
+     property cable : BriefCable?
+
+-    @[JSON::Field(key: "cable_end", type: String, nillable: false, emit_null: false)]
+-    property cable_end : String
++    @[JSON::Field(key: "cable_end", type: String?, nillable: true, emit_null: false)]
++    property cable_end : String?
+
+     @[JSON::Field(key: "link_peers", type: Array(JSON::Any), nillable: false, emit_null: false)]
+     property link_peers : Array(JSON::Any)
+diff --git a/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr b/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr
+index 2d6ab19..e73febf 100644
+--- a/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr
++++ b/vendor/netbox-client/src/netbox-client/models/circuit_termination.cr
+@@ -47,8 +47,8 @@ module NetboxClient
+     property link_peers : Array(JSON::Any)
+
+     # Return the type of the peer link terminations, or None.
+-    @[JSON::Field(key: "link_peers_type", type: String, nillable: false, emit_null: false)]
+-    property link_peers_type : String
++    @[JSON::Field(key: "link_peers_type", type: String?, nillable: true, emit_null: false)]
++    property link_peers_type : String?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/available_prefix.cr b/vendor/netbox-client/src/netbox-client/models/available_prefix.cr
+index fb1c6bb2..967e1b3b 100644
+--- a/vendor/netbox-client/src/netbox-client/models/available_prefix.cr
++++ b/vendor/netbox-client/src/netbox-client/models/available_prefix.cr
+@@ -21,8 +21,8 @@ module NetboxClient
+     @[JSON::Field(key: "prefix", type: String, nillable: false, emit_null: false)]
+     property prefix : String
+
+-    @[JSON::Field(key: "vrf", type: BriefVRF, nillable: false, emit_null: false)]
+-    property vrf : BriefVRF
++    @[JSON::Field(key: "vrf", type: BriefVRF?, nillable: true, emit_null: false)]
++    property vrf : BriefVRF?
+
+     # Initializes the object
+     # @param [Hash] attributes Model attributes in the form of hash

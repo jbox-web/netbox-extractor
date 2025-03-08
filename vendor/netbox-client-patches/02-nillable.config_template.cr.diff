@@ -1,0 +1,15 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/config_template.cr b/vendor/netbox-client/src/netbox-client/models/config_template.cr
+index 9844b321..fa7f1f67 100644
+--- a/vendor/netbox-client/src/netbox-client/models/config_template.cr
++++ b/vendor/netbox-client/src/netbox-client/models/config_template.cr
+@@ -38,8 +38,8 @@ module NetboxClient
+     @[JSON::Field(key: "data_path", type: String, nillable: false, emit_null: false)]
+     property data_path : String
+
+-    @[JSON::Field(key: "data_synced", type: Time, nillable: false, emit_null: false)]
+-    property data_synced : Time
++    @[JSON::Field(key: "data_synced", type: Time?, nillable: true, emit_null: false)]
++    property data_synced : Time?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

@@ -1,0 +1,29 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/front_port.cr b/vendor/netbox-client/src/netbox-client/models/front_port.cr
+index 92edd14..b1aad2d 100644
+--- a/vendor/netbox-client/src/netbox-client/models/front_port.cr
++++ b/vendor/netbox-client/src/netbox-client/models/front_port.cr
+@@ -44,18 +44,18 @@ module NetboxClient
+     @[JSON::Field(key: "rear_port", type: FrontPortRearPort, nillable: false, emit_null: false)]
+     property rear_port : FrontPortRearPort
+
+-    @[JSON::Field(key: "cable", type: BriefCable, nillable: false, emit_null: false)]
+-    property cable : BriefCable
++    @[JSON::Field(key: "cable", type: BriefCable?, nillable: true, emit_null: false)]
++    property cable : BriefCable?
+
+-    @[JSON::Field(key: "cable_end", type: String, nillable: false, emit_null: false)]
+-    property cable_end : String
++    @[JSON::Field(key: "cable_end", type: String?, nillable: true, emit_null: false)]
++    property cable_end : String?
+
+     @[JSON::Field(key: "link_peers", type: Array(JSON::Any), nillable: false, emit_null: false)]
+     property link_peers : Array(JSON::Any)
+
+     # Return the type of the peer link terminations, or None.
+-    @[JSON::Field(key: "link_peers_type", type: String, nillable: false, emit_null: false)]
+-    property link_peers_type : String
++    @[JSON::Field(key: "link_peers_type", type: String?, nillable: true, emit_null: false)]
++    property link_peers_type : String?
+
+     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+     property created : Time

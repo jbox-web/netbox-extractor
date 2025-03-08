@@ -1,0 +1,31 @@
+diff --git a/vendor/netbox-client/src/netbox-client/models/contact_group.cr b/vendor/netbox-client/src/netbox-client/models/contact_group.cr
+index 2b15a03..df82814 100644
+--- a/vendor/netbox-client/src/netbox-client/models/contact_group.cr
++++ b/vendor/netbox-client/src/netbox-client/models/contact_group.cr
+@@ -26,8 +26,8 @@ module NetboxClient
+     @[JSON::Field(key: "url", type: String, nillable: false, emit_null: false)]
+     property url : String
+
+-    @[JSON::Field(key: "display_url", type: String, nillable: false, emit_null: false)]
+-    property display_url : String
++    @[JSON::Field(key: "display_url", type: String?, nillable: true, emit_null: false)]
++    property display_url : String?
+
+     @[JSON::Field(key: "display", type: String, nillable: false, emit_null: false)]
+     property display : String
+@@ -38,11 +38,11 @@ module NetboxClient
+     @[JSON::Field(key: "slug", type: String, nillable: false, emit_null: false)]
+     property slug : String
+
+-    @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+-    property created : Time
++    @[JSON::Field(key: "created", type: Time?, nillable: true, emit_null: false)]
++    property created : Time?
+
+-    @[JSON::Field(key: "last_updated", type: Time, nillable: false, emit_null: false)]
+-    property last_updated : Time
++    @[JSON::Field(key: "last_updated", type: Time?, nillable: true, emit_null: false)]
++    property last_updated : Time?
+
+     @[JSON::Field(key: "contact_count", type: Int32, default: 0, nillable: false, emit_null: false)]
+     property contact_count : Int32
