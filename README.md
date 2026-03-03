@@ -1,5 +1,9 @@
 # netbox-extractor
 
+[![GitHub License](https://img.shields.io/github/license/jbox-web/netbox-extractor)](https://github.com/jbox-web/netbox-extractor/blob/master/LICENSE)
+[![Build Status](https://github.com/jbox-web/netbox-extractor/actions/workflows/ci.yml/badge.svg)](https://github.com/jbox-web/netbox-extractor/actions/workflows/ci.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/jbox-web/netbox-extractor)](https://github.com/jbox-web/netbox-extractor/releases/latest)
+
 Extract data from Netbox (https://github.com/netbox-community/netbox).
 
 Generate :
@@ -9,7 +13,9 @@ Generate :
 
 ## Installation
 
-Get binary from [releases page](https://github.com/jbox-web/netbox-extractor/releases)
+Get binary from [releases page](https://github.com/jbox-web/netbox-extractor/releases).
+
+If you use [asdf](https://github.com/asdf-vm/asdf) you can also install netbox-extractor with [asdf-netbox-extractor](https://github.com/jbox-web/asdf-netbox-extractor).
 
 ## Usage
 
