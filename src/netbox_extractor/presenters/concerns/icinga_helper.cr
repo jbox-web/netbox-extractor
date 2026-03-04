@@ -84,7 +84,7 @@ module NetboxExtractor
         elsif @host.netbox_check_by_ping?
           "ping"
         elsif @host.netbox_windows?
-          "winrm"
+          "snmp"
         else
           "ssh"
         end
