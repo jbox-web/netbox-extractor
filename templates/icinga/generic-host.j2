@@ -51,15 +51,14 @@ object Host "{{ hostname }}" {
   vars.config["rabbit"]["username"] = {{ icinga_check_rabbit_data["username"] }}
   vars.config["rabbit"]["password"] = {{ icinga_check_rabbit_data["password"] }}
   vars.config["rabbit"]["node"]     = "{{ icinga_check_rabbit_data["node"] }}"
-  vars.config["rabbit"]["queues"]   = [
+  vars.config["rabbit"]["queues"]   = {
   {%- for q in icinga_check_rabbit_data["queues"] -%}
-  {
-    name     = "{{ q['name'] }}"
-    warning  = "{{ q['warning'] }}"
-    critical = "{{ q['critical'] }}"
-  },
+    "{{ q['name'] }}" = {
+      warning  = "{{ q['warning'] }}"
+      critical = "{{ q['critical'] }}"
+    },
   {%- endfor -%}
-  ]
+  }
   {%- endif -%}
   {%- if icinga_check_mysql_data -%}
   # MariaDB config
@@ -69,10 +68,9 @@ object Host "{{ hostname }}" {
   {%- endif -%}
   {%- if icinga_check_postgres_data -%}
   # Postgres config
-  vars.config["postgres"]["instances"] = [
+  vars.config["postgres"]["instances"] = {
   {%- for instance in icinga_check_postgres_data["instances"] -%}
-    {
-      name     = "{{ instance['name'] }}"
+    "{{ instance['name'] }}" = {
       port     = "{{ instance['port'] }}"
       version  = "{{ instance['version'] }}"
       dbname   = "{{ instance['dbname'] }}"
@@ -80,7 +78,7 @@ object Host "{{ hostname }}" {
       password = {{ instance['password'] | default(icinga_check_postgres_data["password"]) }}
     },
   {%- endfor -%}
-  ]
+  }
   {%- endif -%}
 
   {%- if icinga_check_php_data -%}
