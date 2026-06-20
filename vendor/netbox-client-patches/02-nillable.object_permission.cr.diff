@@ -1,15 +1,12 @@
 diff --git a/vendor/netbox-client/src/netbox-client/models/object_permission.cr b/vendor/netbox-client/src/netbox-client/models/object_permission.cr
-index d2a4211c..e71a243c 100644
 --- a/vendor/netbox-client/src/netbox-client/models/object_permission.cr
 +++ b/vendor/netbox-client/src/netbox-client/models/object_permission.cr
-@@ -21,8 +21,8 @@ module NetboxClient
-     @[JSON::Field(key: "url", type: String, nillable: false, emit_null: false)]
+@@ -22,7 +22,7 @@
      property url : String
-
--    @[JSON::Field(key: "display_url", type: String, nillable: false, emit_null: false)]
+ 
+     @[JSON::Field(key: "display_url", emit_null: false)]
 -    property display_url : String
-+    @[JSON::Field(key: "display_url", type: String?, nillable: true, emit_null: false)]
 +    property display_url : String?
-
-     @[JSON::Field(key: "display", type: String, nillable: false, emit_null: false)]
+ 
+     @[JSON::Field(key: "display", emit_null: false)]
      property display : String

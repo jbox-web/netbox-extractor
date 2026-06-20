@@ -1,36 +1,29 @@
 diff --git a/vendor/netbox-client/src/netbox-client/models/cluster.cr b/vendor/netbox-client/src/netbox-client/models/cluster.cr
-index d270b1e..1038e7d 100644
 --- a/vendor/netbox-client/src/netbox-client/models/cluster.cr
 +++ b/vendor/netbox-client/src/netbox-client/models/cluster.cr
-@@ -38,8 +38,8 @@ module NetboxClient
-     @[JSON::Field(key: "type", type: BriefClusterType, nillable: false, emit_null: false)]
+@@ -34,7 +34,7 @@
      property _type : BriefClusterType
-
--    @[JSON::Field(key: "scope", type: JSON::Any, nillable: false, emit_null: false)]
+ 
+     @[JSON::Field(key: "scope", emit_null: false)]
 -    property scope : JSON::Any
-+    @[JSON::Field(key: "scope", type: JSON::Any?, nillable: true, emit_null: false)]
 +    property scope : JSON::Any?
-
-     @[JSON::Field(key: "created", type: Time, nillable: false, emit_null: false)]
+ 
+     @[JSON::Field(key: "created", emit_null: false)]
      property created : Time
-@@ -53,14 +53,14 @@ module NetboxClient
-     @[JSON::Field(key: "virtualmachine_count", type: Int64, nillable: false, emit_null: false)]
+@@ -49,13 +49,13 @@
      property virtualmachine_count : Int64
-
--    @[JSON::Field(key: "allocated_vcpus", type: Float64, nillable: false, emit_null: false)]
+ 
+     @[JSON::Field(key: "allocated_vcpus", emit_null: false)]
 -    property allocated_vcpus : Float64
-+    @[JSON::Field(key: "allocated_vcpus", type: Float64?, nillable: true, emit_null: false)]
 +    property allocated_vcpus : Float64?
-
--    @[JSON::Field(key: "allocated_memory", type: Int32, nillable: false, emit_null: false)]
+ 
+     @[JSON::Field(key: "allocated_memory", emit_null: false)]
 -    property allocated_memory : Int32
-+    @[JSON::Field(key: "allocated_memory", type: Int32?, nillable: true, emit_null: false)]
 +    property allocated_memory : Int32?
-
--    @[JSON::Field(key: "allocated_disk", type: Int32, nillable: false, emit_null: false)]
+ 
+     @[JSON::Field(key: "allocated_disk", emit_null: false)]
 -    property allocated_disk : Int32
-+    @[JSON::Field(key: "allocated_disk", type: Int32?, nillable: true, emit_null: false)]
 +    property allocated_disk : Int32?
-
+ 
      # Optional properties
-     @[JSON::Field(key: "group", type: BriefClusterGroup?, nillable: true, emit_null: false)]
+     @[JSON::Field(key: "group", emit_null: false)]
