@@ -5,16 +5,16 @@ module NetboxExtractor
         Log = ::Log.for("netbox-extractor.test_api.post")
 
         def self.create_vms
-          virtualization_api = NetboxClient::VirtualizationApi.new
+          virtualization = NetboxExtractor.client.virtualization
 
-          vms = virtualization_api.virtualization_virtual_machines_list
+          vms = virtualization.virtual_machines.list.value
           vms.results.each do |vm|
             Log.info { "Found vm: #{vm.name}" }
             # puts vm.local_context_data
           end
 
           Log.info { "Finding a random cluster" }
-          clusters = virtualization_api.virtualization_clusters_list
+          clusters = virtualization.clusters.list.value
           cluster = clusters.results.first
 
           Log.info { "loading request data:" }
@@ -22,7 +22,7 @@ module NetboxExtractor
           r = Random.new
           random = r.next_int
 
-          vm1 = {"name" => "foo#{random}", "cluster" => {"value" => cluster.to_h}}.to_any_h
+          vm1 = {"name" => "foo#{random}", "cluster" => {"value" => cluster.to_h}}
           # vm2 = {"name" => "bar#{random}", "cluster" => {"value" => cluster.to_h}}.to_any_h
           # data = [vm1, vm2]
 
@@ -50,22 +50,21 @@ module NetboxExtractor
           if request_vm1
             Log.info { "creating vm: #{request_vm1}" }
 
-            vm = virtualization_api.virtualization_virtual_machines_create(request_vm1)
+            vm = virtualization.virtual_machines.create(request_vm1).value
             create_bookmark(vm)
           end
         end
 
         def self.create_bookmark(vm)
-          user = NetboxClient::BookmarkRequestUser.build({"username" => "user713604"}.to_any_h)
+          user = NetboxClient::BookmarkRequestUser.build({"username" => "user713604"})
 
           if user
-            bk1 = {"object_type" => "virtualization.virtualmachine", "object_id" => vm.id.to_i64, "user" => user.to_any_h}.to_any_h
+            bk1 = {"object_type" => "virtualization.virtualmachine", "object_id" => vm.id.to_i64, "user" => user}
             request_bk1 = NetboxClient::ExtrasBookmarksCreateRequest.build(bk1)
 
             if request_bk1
               Log.info { "creating bookmark: #{request_bk1}" }
-              extras_api = NetboxClient::ExtrasApi.new
-              extras_api.extras_bookmarks_create(request_bk1)
+              NetboxExtractor.client.extras.bookmarks.create(request_bk1)
             end
           end
         end

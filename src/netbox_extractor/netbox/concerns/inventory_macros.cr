@@ -10,7 +10,7 @@ module NetboxExtractor
 
           begin
             loop do
-              data = {{method.id}}(limit: limit, offset: offset)
+              data = {{method.id}}(limit: limit, offset: offset).value
               total = data.count
               results += data.results
               offset += limit

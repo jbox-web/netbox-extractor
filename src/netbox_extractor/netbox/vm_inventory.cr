@@ -11,7 +11,6 @@ module NetboxExtractor
       def initialize(@site : NetboxExtractor::Config::Site)
         Log.context.set site: @site.id
 
-        @virtualization_api = NetboxClient::VirtualizationApi.new
         @vms = [] of NetboxClient::VirtualMachineWithConfigContext
       end
 
@@ -30,7 +29,7 @@ module NetboxExtractor
         log: "Loaded vms"
 
       private def fetch_virtualization_virtual_machines_list(limit, offset)
-        @virtualization_api.virtualization_virtual_machines_list(limit: limit, offset: offset, site: [@site.id])
+        NetboxExtractor.client.virtualization.virtual_machines.list(limit: limit, offset: offset, site: [@site.id])
       end
     end
   end

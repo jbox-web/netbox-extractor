@@ -45,19 +45,31 @@ module NetboxExtractor
     @@config ||= Config::Base.from_yaml("")
   end
 
+  @@client : NetboxClient::Client?
+
+  # The shared, per-instance Netbox client. Built from the loaded config the
+  # first time it is needed (or eagerly by `setup_netbox_api!`).
+  def self.client : NetboxClient::Client
+    @@client ||= build_netbox_client
+  end
+
   def self.init_app!
     setup_log!
     setup_netbox_api!
   end
 
   def self.setup_netbox_api!
-    NetboxClient.configure do |client|
-      client.scheme = config.netbox.http_scheme
-      client.host = config.netbox.hostname
-      client.debugging = config.netbox.debug?
-      client.api_key[:Authorization] = config.netbox.api_token
-      client.api_key_prefix[:Authorization] = "Token"
-    end
+    @@client = build_netbox_client
+  end
+
+  private def self.build_netbox_client : NetboxClient::Client
+    cfg = NetboxClient::Configuration.new
+    cfg.scheme = config.netbox.http_scheme
+    cfg.host = config.netbox.hostname
+    cfg.debugging = config.netbox.debug?
+    cfg.api_key[:Authorization] = config.netbox.api_token
+    cfg.api_key_prefix[:Authorization] = "Token"
+    NetboxClient::Client.new(NetboxClient::Connection.new(cfg))
   end
 end
 

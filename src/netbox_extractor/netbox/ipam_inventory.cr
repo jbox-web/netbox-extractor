@@ -8,7 +8,6 @@ module NetboxExtractor
       Log = ::Log.for("netbox-extractor.ipam_inventory")
 
       def initialize
-        @ipam_api = NetboxClient::IpamApi.new
         @ips = [] of NetboxClient::IPAddress
       end
 
@@ -27,7 +26,7 @@ module NetboxExtractor
         log: "Loaded ip addresses"
 
       private def fetch_ipam_ip_addresses_list(limit, offset)
-        @ipam_api.ipam_ip_addresses_list(limit: limit, offset: offset)
+        NetboxExtractor.client.ipam.ip_addresses.list(limit: limit, offset: offset)
       end
     end
   end
