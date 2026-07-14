@@ -21,6 +21,9 @@ object Host "{{ host }}" {
   {%- else -%}
   vars.http_check_cert          = true
   {%- endif -%}
+  {%- if http_sni -%}
+  vars.http_sni                 = {{ http_sni }}
+  {%- endif -%}
   vars.http_vhost               = "{{ host }}"
   {%- if http_port -%}
   vars.http_port                = {{ http_port }}

@@ -10,6 +10,7 @@ module NetboxExtractor
           property host : String
           property? http_ssl : Bool = true
           property? http_check_cert : Bool = true
+          property? http_sni : Bool = false
           property http_uri : String?
           property http_address : String?
           property http_expect : String?
@@ -24,6 +25,10 @@ module NetboxExtractor
               "http_ssl"        => http_ssl?,
               "http_check_cert" => http_check_cert?,
             }
+
+            if http_sni?
+              hash = hash.merge({"http_sni" => http_sni?})
+            end
 
             if uri = http_uri
               hash = hash.merge({"http_uri" => uri})
