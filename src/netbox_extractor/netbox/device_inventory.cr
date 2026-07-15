@@ -8,7 +8,7 @@ module NetboxExtractor
 
       Log = ::Log.for("netbox-extractor.device_inventory")
 
-      def initialize(@site : NetboxExtractor::Config::Site)
+      def initialize(@site : NetboxExtractor::Config::Site, @client : NetboxClient::Client = NetboxExtractor.client)
         Log.context.set site: @site.id
 
         @devices = [] of NetboxClient::DeviceWithConfigContext
@@ -29,7 +29,7 @@ module NetboxExtractor
         log: "Loaded devices"
 
       private def fetch_dcim_devices_list(limit, offset)
-        NetboxExtractor.client.dcim.devices.list(limit: limit, offset: offset, site: [@site.id])
+        @client.dcim.devices.list(limit: limit, offset: offset, site: [@site.id])
       end
     end
   end

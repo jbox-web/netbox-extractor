@@ -8,7 +8,7 @@ module NetboxExtractor
 
       Log = ::Log.for("netbox-extractor.vm_inventory")
 
-      def initialize(@site : NetboxExtractor::Config::Site)
+      def initialize(@site : NetboxExtractor::Config::Site, @client : NetboxClient::Client = NetboxExtractor.client)
         Log.context.set site: @site.id
 
         @vms = [] of NetboxClient::VirtualMachineWithConfigContext
@@ -29,7 +29,7 @@ module NetboxExtractor
         log: "Loaded vms"
 
       private def fetch_virtualization_virtual_machines_list(limit, offset)
-        NetboxExtractor.client.virtualization.virtual_machines.list(limit: limit, offset: offset, site: [@site.id])
+        @client.virtualization.virtual_machines.list(limit: limit, offset: offset, site: [@site.id])
       end
     end
   end
