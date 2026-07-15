@@ -1,19 +1,19 @@
-object Host "{{ hostname }}" {
+object Host "{{ hostname | icinga_string }}" {
   # Base config
   import   "generic-host"
-  zone     = "{{ icinga_zone }}"
-  address  = "{{ ipv4_address }}"
+  zone     = "{{ icinga_zone | icinga_string }}"
+  address  = "{{ ipv4_address | icinga_string }}"
 
-  vars.config["check"]["type"]          = "{{ check_type }}"
-  vars.config["server"]["zone"]         = "{{ host_zone }}"
-  vars.config["server"]["type"]         = "{{ host_type }}"
-  vars.config["server"]["tags"]         = {{ tags | sort | string | replace("'", "\"") }}
-  vars.config["server"]["os_name"]      = "{{ os_name }}"
-  vars.config["server"]["os_family"]    = "{{ os_family }}"
+  vars.config["check"]["type"]          = "{{ check_type | icinga_string }}"
+  vars.config["server"]["zone"]         = "{{ host_zone | icinga_string }}"
+  vars.config["server"]["type"]         = "{{ host_type | icinga_string }}"
+  vars.config["server"]["tags"]         = {{ tags | sort | icinga_array }}
+  vars.config["server"]["os_name"]      = "{{ os_name | icinga_string }}"
+  vars.config["server"]["os_family"]    = "{{ os_family | icinga_string }}"
   {%- if icinga_check_esx_data -%}
   vars.config["vmware"]["username"]     = {{ icinga_check_esx_data["username"] }}
   vars.config["vmware"]["password"]     = {{ icinga_check_esx_data["password"] }}
   {%- endif -%}
-  vars.config["server"]["vendor_name"]  = "{{ vendor_name }}"
-  vars.config["server"]["vendor_model"] = "{{ vendor_model }}"
+  vars.config["server"]["vendor_name"]  = "{{ vendor_name | icinga_string }}"
+  vars.config["server"]["vendor_model"] = "{{ vendor_model | icinga_string }}"
 }

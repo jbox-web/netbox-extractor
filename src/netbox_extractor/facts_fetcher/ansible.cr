@@ -3,10 +3,7 @@ module NetboxExtractor
     class Ansible
       Log = ::Log.for("netbox-extractor.ansible")
 
-      FORK_LIMIT      =   30
-      TIMEOUT         =    5
-      CACHING_TIMEOUT = 3600
-      SSH_ARGS        = ""
+      SSH_ARGS = ""
 
       def self.run(site)
         facts_fetcher = new(site)
@@ -16,21 +13,32 @@ module NetboxExtractor
       @cache_path : Path
       @deprecation_warnings : Bool
       @host_key_checking : Bool
+      @fork_limit : Int32
+      @timeout : Int32
+      @caching_timeout : Int32
+      @ssh_args : String
 
-      def initialize(@site : NetboxExtractor::Config::Site) # ameba:disable Metrics/CyclomaticComplexity
+      def initialize(@site : NetboxExtractor::Config::Site)
         @cache_path = NetboxExtractor.config.ansible.fetch_facts.cache_path
         @use_mitogen = NetboxExtractor.config.ansible.fetch_facts.mitogen.enabled?
         @mitogen_path = NetboxExtractor.config.ansible.fetch_facts.mitogen.path
         @mitogen_strategy = NetboxExtractor.config.ansible.fetch_facts.mitogen.strategy
         @fetch_facts_exclude_tags = NetboxExtractor.config.ansible.fetch_facts.exclude_tags
 
-        @deprecation_warnings = @site.ansible.fetch_facts.try &.deprecation_warnings? || NetboxExtractor.config.ansible.fetch_facts.try &.deprecation_warnings?
-        @host_key_checking = @site.ansible.fetch_facts.try &.host_key_checking? || NetboxExtractor.config.ansible.fetch_facts.try &.host_key_checking?
+        site_ff = @site.ansible.fetch_facts
+        global_ff = NetboxExtractor.config.ansible.fetch_facts
 
-        @fork_limit = @site.ansible.fetch_facts.try &.fork_limit || NetboxExtractor.config.ansible.fetch_facts.try &.fork_limit || FORK_LIMIT
-        @timeout = @site.ansible.fetch_facts.try &.timeout || NetboxExtractor.config.ansible.fetch_facts.try &.timeout || TIMEOUT
-        @caching_timeout = @site.ansible.fetch_facts.try &.caching_timeout || NetboxExtractor.config.ansible.fetch_facts.try &.caching_timeout || CACHING_TIMEOUT
-        @ssh_args = @site.ansible.fetch_facts.try &.ssh_args || NetboxExtractor.config.ansible.fetch_facts.try &.ssh_args || SSH_ARGS
+        # A nil site value inherits the global one; a non-nil site value wins —
+        # including an explicit `false`, which a plain `||` would have dropped.
+        site_dw = site_ff.deprecation_warnings
+        @deprecation_warnings = site_dw.nil? ? global_ff.deprecation_warnings? : site_dw
+        site_hkc = site_ff.host_key_checking
+        @host_key_checking = site_hkc.nil? ? global_ff.host_key_checking? : site_hkc
+
+        @fork_limit = site_ff.fork_limit || global_ff.fork_limit
+        @timeout = site_ff.timeout || global_ff.timeout
+        @caching_timeout = site_ff.caching_timeout || global_ff.caching_timeout
+        @ssh_args = site_ff.ssh_args || global_ff.ssh_args || SSH_ARGS
 
         set_log_context!
       end
@@ -52,7 +60,7 @@ module NetboxExtractor
 
       private def fetch_facts(filename)
         inventory_file = @site.ansible_inventory_path.join(filename)
-        inventory = File.exists?(inventory_file) ? YAML.parse(File.read(inventory_file)) : {} of String => String
+        inventory = load_inventory_yaml(inventory_file)
         inventory_name = File.basename(filename, File.extname(filename))
 
         Log.info { "Fetching Ansible facts for #{inventory_name}" }
@@ -70,8 +78,22 @@ module NetboxExtractor
         end
       end
 
+      # Falls back to an empty document rather than aborting the fiber when the
+      # existing inventory is missing or hand-edited into invalid YAML (C5).
+      private def load_inventory_yaml(path)
+        return YAML.parse("{}") unless File.exists?(path)
+
+        YAML.parse(File.read(path))
+      rescue ex : YAML::ParseException | IO::Error
+        Log.warn { "Ignoring unreadable inventory #{path}: #{ex.message}" }
+        YAML.parse("{}")
+      end
+
       private def filter_hosts(hosts)
-        hosts.reject! { |_k, v| (v["netbox_tags"].as_a & @fetch_facts_exclude_tags).size > 0 }
+        hosts.reject! do |_k, v|
+          tags = v["netbox_tags"]?.try(&.as_a) || [] of YAML::Any
+          (tags & @fetch_facts_exclude_tags).size > 0
+        end
         hosts.to_h
       end
 
@@ -86,13 +108,15 @@ module NetboxExtractor
 
         Log.debug { "Running command: ansible-playbook #{args} | #{env}" }
 
-        Process.run("ansible-playbook",
+        status = Process.run("ansible-playbook",
           shell: true,
           output: STDOUT,
           error: STDERR,
           args: args,
           env: env
         )
+
+        raise "ansible-playbook exited with status #{status.exit_code}" unless status.success?
       end
 
       private def generate_ansible_inventory(inventory)

@@ -7,13 +7,13 @@ module NetboxExtractor
 
           property username : String
           property password : String
-          property check_slave : Bool? = false
+          property? check_slave : Bool = false
 
           def to_h
             {
               "username"    => username,
               "password"    => password,
-              "check_slave" => check_slave,
+              "check_slave" => check_slave?,
             }
           end
         end

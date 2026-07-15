@@ -72,8 +72,20 @@ module NetboxExtractor
         end
       end
 
+      # Preserves the user-editable `vars:` block across regeneration, falling
+      # back to an empty document if the existing file is missing or corrupt
+      # rather than aborting the fiber (C5).
+      private def load_existing_inventory(inventory_file)
+        return YAML.parse("{}") unless File.exists?(inventory_file)
+
+        YAML.parse(File.read(inventory_file))
+      rescue ex : YAML::ParseException | IO::Error
+        Log.warn { "Ignoring unreadable inventory #{inventory_file}: #{ex.message}" }
+        YAML.parse("{}")
+      end
+
       private def ansible_dump(inventory, inventory_file)
-        current_inventory = File.exists?(inventory_file) ? YAML.parse(File.read(inventory_file)) : {} of String => String
+        current_inventory = load_existing_inventory(inventory_file)
 
         vars = current_inventory.dig?("all", "vars") || {} of String => String
         hosts = inventory.map { |host| to_ansible(host) }

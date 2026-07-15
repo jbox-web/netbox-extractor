@@ -1,27 +1,27 @@
-object Host "{{ hostname }}" {
+object Host "{{ hostname | icinga_string }}" {
   # Base config
   import   "generic-host"
-  zone     = "{{ icinga_zone }}"
-  address  = "{{ ipv4_address }}"
+  zone     = "{{ icinga_zone | icinga_string }}"
+  address  = "{{ ipv4_address | icinga_string }}"
 
-  vars.config["check"]["type"]            = "{{ check_type }}"
-  vars.config["server"]["zone"]           = "{{ host_zone }}"
-  vars.config["server"]["type"]           = "{{ host_type }}"
-  vars.config["server"]["tags"]           = {{ tags | sort | string | replace("'", "\"") }}
-  vars.config["server"]["os_name"]        = "{{ os_name }}"
-  vars.config["server"]["os_family"]      = "{{ os_family }}"
+  vars.config["check"]["type"]            = "{{ check_type | icinga_string }}"
+  vars.config["server"]["zone"]           = "{{ host_zone | icinga_string }}"
+  vars.config["server"]["type"]           = "{{ host_type | icinga_string }}"
+  vars.config["server"]["tags"]           = {{ tags | sort | icinga_array }}
+  vars.config["server"]["os_name"]        = "{{ os_name | icinga_string }}"
+  vars.config["server"]["os_family"]      = "{{ os_family | icinga_string }}"
   {%- if icinga_check_netapp_data["volumes"] -%}
-  vars.config["netapp"]["volumes"]        = {{ icinga_check_netapp_data["volumes"] | string | replace("'", "\"") }}
+  vars.config["netapp"]["volumes"]        = {{ icinga_check_netapp_data["volumes"] | icinga_array }}
   {%- endif -%}
   {%- if icinga_check_netapp_data["exclude_checks"] -%}
-  vars.config["netapp"]["exclude_checks"] = {{ icinga_check_netapp_data["exclude_checks"] | string | replace("'", "\"") }}
+  vars.config["netapp"]["exclude_checks"] = {{ icinga_check_netapp_data["exclude_checks"] | icinga_array }}
   {%- endif -%}
   {%- if icinga_check_netapp_data["aggregates"] -%}
-  vars.config["netapp"]["aggregates"]["warning"] = "{{ icinga_check_netapp_data["aggregates"]["warning"] }}"
-  vars.config["netapp"]["aggregates"]["critical"] = "{{ icinga_check_netapp_data["aggregates"]["critical"] }}"
+  vars.config["netapp"]["aggregates"]["warning"] = "{{ icinga_check_netapp_data["aggregates"]["warning"] | icinga_string }}"
+  vars.config["netapp"]["aggregates"]["critical"] = "{{ icinga_check_netapp_data["aggregates"]["critical"] | icinga_string }}"
   {%- endif -%}
   {%- if icinga_check_netapp_data["check_api"] -%}
-  vars.config["netapp"]["check_api"]["base_url"] = "{{ icinga_check_netapp_data["check_api"]["base_url"] }}"
+  vars.config["netapp"]["check_api"]["base_url"] = "{{ icinga_check_netapp_data["check_api"]["base_url"] | icinga_string }}"
   vars.config["netapp"]["check_api"]["username"] = {{ icinga_check_netapp_data["check_api"]["username"] }}
   vars.config["netapp"]["check_api"]["password"] = {{ icinga_check_netapp_data["check_api"]["password"] }}
   {%- endif -%}

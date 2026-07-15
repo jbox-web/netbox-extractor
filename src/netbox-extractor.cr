@@ -42,8 +42,10 @@ module NetboxExtractor
     @@config = config
   end
 
-  def self.config
-    @@config ||= Config::Base.from_yaml("")
+  @@config : Config::Base? = nil
+
+  def self.config : Config::Base
+    @@config || raise "Configuration not loaded — call load_config first"
   end
 
   @@client : NetboxClient::Client?
@@ -79,7 +81,7 @@ if Crystal.env.production?
   begin
     NetboxExtractor::CLI.run
   rescue e : Exception
-    puts e.message
+    STDERR.puts e.inspect_with_backtrace
     exit 1
   end
 else

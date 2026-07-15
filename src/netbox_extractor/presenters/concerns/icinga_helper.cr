@@ -104,7 +104,9 @@ module NetboxExtractor
 
         # cap the num_cpus to 32, otherwise numbers become meaningless
         # and alerts are not send
-        num_cpus = num_cpus.as_i
+        num_cpus = num_cpus.as_i?
+        return if num_cpus.nil?
+
         num_cpus = 32 if num_cpus > 32
 
         warning1 = ((num_cpus * 2) / 1).to_i
@@ -119,7 +121,9 @@ module NetboxExtractor
 
         # cap the num_cpus to 32, otherwise numbers become meaningless
         # and alerts are not send
-        num_cpus = num_cpus.as_i
+        num_cpus = num_cpus.as_i?
+        return if num_cpus.nil?
+
         num_cpus = 32 if num_cpus > 32
 
         critical1 = ((num_cpus * 4) / 1).to_i
@@ -160,7 +164,7 @@ module NetboxExtractor
             [] of String
           end
 
-        mounts = mounts.as_a.map(&.["mount"].as_s) if mounts.is_a?(JSON::Any)
+        mounts = mounts.as_a.compact_map { |m| m["mount"]?.try(&.as_s) } if mounts.is_a?(JSON::Any)
         mounts - excluded
       end
 
@@ -180,6 +184,9 @@ module NetboxExtractor
         return nil unless File.exists?(facts_file)
 
         JSON.parse(File.read(facts_file)).as_h
+      rescue ex : JSON::ParseException | IO::Error
+        Log.warn { "Ignoring unreadable facts #{facts_file}: #{ex.message}" }
+        nil
       end
     end
   end

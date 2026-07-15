@@ -6,12 +6,15 @@ module NetboxExtractor
 
         property inventories : Array(String) = [] of String
         property exclude_tags : Array(String) = [] of String
-        property fork_limit : Int32 = 30
-        property timeout : Int32 = 5
-        property caching_timeout : Int32 = 3600
+
+        # nil means "inherit the global value": a non-nil default here would make
+        # the site value always win and silently shadow the global config (E6).
+        property fork_limit : Int32? = nil
+        property timeout : Int32? = nil
+        property caching_timeout : Int32? = nil
         property ssh_args : String? = nil
-        property? deprecation_warnings : Bool = false
-        property? host_key_checking : Bool = true
+        property deprecation_warnings : Bool? = nil
+        property host_key_checking : Bool? = nil
       end
     end
   end

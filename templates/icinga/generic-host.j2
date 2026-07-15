@@ -1,61 +1,61 @@
-object Host "{{ hostname }}" {
+object Host "{{ hostname | icinga_string }}" {
   # Base config
   import   "generic-host"
-  zone     = "{{ icinga_zone }}"
-  address  = "{{ ipv4_address }}"
+  zone     = "{{ icinga_zone | icinga_string }}"
+  address  = "{{ ipv4_address | icinga_string }}"
   {%- if notification_period -%}
-  vars.notification_period = "{{ notification_period }}"
+  vars.notification_period = "{{ notification_period | icinga_string }}"
   {%- endif -%}
 
   # Check config
-  vars.config["check"]["type"] = "{{ check_type }}"
+  vars.config["check"]["type"] = "{{ check_type | icinga_string }}"
 
   # Server infos
-  vars.config["server"]["zone"]           = "{{ host_zone }}"
-  vars.config["server"]["type"]           = "{{ host_type }}"
-  vars.config["server"]["tags"]           = {{ tags | string | replace("'", "\"") }}
-  vars.config["server"]["os_name"]        = "{{ os_name }}"
-  vars.config["server"]["os_family"]      = "{{ os_family }}"
+  vars.config["server"]["zone"]           = "{{ host_zone | icinga_string }}"
+  vars.config["server"]["type"]           = "{{ host_type | icinga_string }}"
+  vars.config["server"]["tags"]           = {{ tags | icinga_array }}
+  vars.config["server"]["os_name"]        = "{{ os_name | icinga_string }}"
+  vars.config["server"]["os_family"]      = "{{ os_family | icinga_string }}"
   {%- if os_distro -%}
-  vars.config["server"]["os_distro"]      = "{{ os_distro }}"
+  vars.config["server"]["os_distro"]      = "{{ os_distro | icinga_string }}"
   {%- endif -%}
   {%- if debian_release -%}
-  vars.config["server"]["debian_release"] = "{{ debian_release }}"
+  vars.config["server"]["debian_release"] = "{{ debian_release | icinga_string }}"
   {%- endif -%}
   {%- if host_type == "virtual" -%}
-  vars.config["server"]["esx_host"]       = "{{ hosting_node }}"
+  vars.config["server"]["esx_host"]       = "{{ hosting_node | icinga_string }}"
   {%- endif -%}
   {%- if host_type == "physical" -%}
-  vars.config["server"]["vendor_name"]    = "{{ vendor_name }}"
-  vars.config["server"]["vendor_model"]   = "{{ vendor_model }}"
+  vars.config["server"]["vendor_name"]    = "{{ vendor_name | icinga_string }}"
+  vars.config["server"]["vendor_model"]   = "{{ vendor_model | icinga_string }}"
   {%- endif -%}
   {%- if true -%}
 
   # Storage config
-  vars.config["storage"]["partitions"] = {{ partitions_list | sort | string | replace("'", "\"") }}
+  vars.config["storage"]["partitions"] = {{ partitions_list | sort | icinga_array }}
   {%- endif -%}
 
   {%- if icinga_check_nfs_data -%}
   # NFS config
-  vars.config["nfs"]["mountpoints"] = {{ icinga_check_nfs_data["mountpoints"] | string | replace("'", "\"") }}
+  vars.config["nfs"]["mountpoints"] = {{ icinga_check_nfs_data["mountpoints"] | icinga_array }}
   {%- endif -%}
 
   {%- if load_warning and load_critical -%}
   # Load config
-  vars.config["load"]["warning"]  = "{{ load_warning }}"
-  vars.config["load"]["critical"] = "{{ load_critical }}"
+  vars.config["load"]["warning"]  = "{{ load_warning | icinga_string }}"
+  vars.config["load"]["critical"] = "{{ load_critical | icinga_string }}"
   {%- endif -%}
 
   {%- if icinga_check_rabbit_data -%}
   # RabbitMQ config
   vars.config["rabbit"]["username"] = {{ icinga_check_rabbit_data["username"] }}
   vars.config["rabbit"]["password"] = {{ icinga_check_rabbit_data["password"] }}
-  vars.config["rabbit"]["node"]     = "{{ icinga_check_rabbit_data["node"] }}"
+  vars.config["rabbit"]["node"]     = "{{ icinga_check_rabbit_data["node"] | icinga_string }}"
   vars.config["rabbit"]["queues"]   = {
   {%- for q in icinga_check_rabbit_data["queues"] -%}
-    "{{ q['name'] }}" = {
-      warning  = "{{ q['warning'] }}"
-      critical = "{{ q['critical'] }}"
+    "{{ q['name'] | icinga_string }}" = {
+      warning  = "{{ q['warning'] | icinga_string }}"
+      critical = "{{ q['critical'] | icinga_string }}"
     },
   {%- endfor -%}
   }
@@ -70,10 +70,10 @@ object Host "{{ hostname }}" {
   # Postgres config
   vars.config["postgres"]["instances"] = {
   {%- for instance in icinga_check_postgres_data["instances"] -%}
-    "{{ instance['name'] }}" = {
-      port     = "{{ instance['port'] }}"
-      version  = "{{ instance['version'] }}"
-      dbname   = "{{ instance['dbname'] }}"
+    "{{ instance['name'] | icinga_string }}" = {
+      port     = "{{ instance['port'] | icinga_string }}"
+      version  = "{{ instance['version'] | icinga_string }}"
+      dbname   = "{{ instance['dbname'] | icinga_string }}"
       username = {{ instance['username'] | default(icinga_check_postgres_data["username"]) }}
       password = {{ instance['password'] | default(icinga_check_postgres_data["password"]) }}
     },
@@ -83,18 +83,18 @@ object Host "{{ hostname }}" {
 
   {%- if icinga_check_php_data -%}
   # Php config
-  vars.config["php"]["version"] = "{{ icinga_check_php_data["version"] }}"
+  vars.config["php"]["version"] = "{{ icinga_check_php_data["version"] | icinga_string }}"
   {%- endif -%}
   {%- if icinga_check_drac_data -%}
-  vars.config["drac"]["exclude_checks"] = {{ icinga_check_drac_data["exclude_checks"] | string | replace("'", "\"") }}
+  vars.config["drac"]["exclude_checks"] = {{ icinga_check_drac_data["exclude_checks"] | icinga_array }}
   {%- endif -%}
   {%- if icinga_check_dns_data -%}
   # Check DNS config
   vars.config["check_dns"]["entries"] = [
   {%- for k, v in icinga_check_dns_data["entries"] -%}
     {
-      name = "{{ k }}"
-      ip = "{{ v }}"
+      name = "{{ k | icinga_string }}"
+      ip = "{{ v | icinga_string }}"
     },
   {%- endfor -%}
   ]

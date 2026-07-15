@@ -1,10 +1,10 @@
-object Host "{{ host }}" {
+object Host "{{ host | icinga_string }}" {
   # Base config
   import   "generic-host"
-  zone     = "{{ icinga_zone }}"
-  address  = "{{ host }}"
+  zone     = "{{ icinga_zone | icinga_string }}"
+  address  = "{{ host | icinga_string }}"
   {%- if notification_period -%}
-  vars.notification_period = "{{ notification_period }}"
+  vars.notification_period = "{{ notification_period | icinga_string }}"
   {%- endif -%}
 
   # Override default check command
@@ -24,27 +24,27 @@ object Host "{{ host }}" {
   {%- if http_sni -%}
   vars.http_sni                 = {{ http_sni }}
   {%- endif -%}
-  vars.http_vhost               = "{{ host }}"
+  vars.http_vhost               = "{{ host | icinga_string }}"
   {%- if http_port -%}
   vars.http_port                = {{ http_port }}
   {%- endif -%}
   {%- if http_address -%}
-  vars.http_address             = "{{ http_address }}"
+  vars.http_address             = "{{ http_address | icinga_string }}"
   {%- endif -%}
   {%- if http_uri -%}
-  vars.http_uri                 = "{{ http_uri }}"
+  vars.http_uri                 = "{{ http_uri | icinga_string }}"
   {%- endif -%}
   {%- if http_expect -%}
-  vars.http_expect              = "{{ http_expect }}"
+  vars.http_expect              = "{{ http_expect | icinga_string }}"
   {%- endif -%}
   {%- if http_expect_body_regex -%}
-  vars.http_expect_body_regex   = "{{ http_expect_body_regex }}"
+  vars.http_expect_body_regex   = "{{ http_expect_body_regex | icinga_string }}"
   {%- endif -%}
   vars.config["check"]["type"]  = "http"
-  vars.config["vhost"]["type"]  = "{{ subdir }}"
+  vars.config["vhost"]["type"]  = "{{ subdir | icinga_string }}"
   vars.config["server"]["type"] = "web"
-  vars.config["server"]["zone"] = "{{ icinga_zone }}"
+  vars.config["server"]["zone"] = "{{ icinga_zone | icinga_string }}"
   {%- if tags -%}
-  vars.config["server"]["tags"] = {{ tags | string | replace("'", "\"") }}
+  vars.config["server"]["tags"] = {{ tags | icinga_array }}
   {%- endif -%}
 }

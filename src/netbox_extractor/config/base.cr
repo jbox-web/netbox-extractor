@@ -13,9 +13,9 @@ module NetboxExtractor
       def after_initialize
         @sites_config.each do |config_file|
           file = File.expand_path(config_file)
-          if File.exists?(file)
-            @sites << Site.from_yaml(File.read(file))
-          end
+          raise ValidationError.new("sites_config file not found: #{config_file}") unless File.exists?(file)
+
+          @sites << Site.from_yaml(File.read(file))
         end
       end
 
