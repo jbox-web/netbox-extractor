@@ -10,12 +10,13 @@ Generate :
 
 * Ansible inventories
 * Icinga config files
+* Bind DNS zone files
 
 ## Installation
 
 Get binary from [releases page](https://github.com/jbox-web/netbox-extractor/releases).
 
-If you use [asdf](https://github.com/asdf-vm/asdf) you can also install netbox-extractor with [asdf-netbox-extractor](https://github.com/jbox-web/asdf-netbox-extractor).
+If you use [mise](https://mise.jdx.dev/) you can also install netbox-extractor with [asdf-netbox-extractor](https://github.com/jbox-web/asdf-netbox-extractor).
 
 ## Usage
 
@@ -38,11 +39,14 @@ Subcommands:
 
 ## Development
 
+Tooling is managed with [mise](https://mise.jdx.dev/).
+
 ```sh
-make setup
-make deps
-make spec
-make build
+mise run dev:deps     # Install dependencies (shards install)
+mise run dev:build    # Compile bin/netbox-extractor
+mise run dev:spec     # Run tests
+mise run dev:ameba    # Static analysis (ameba)
+mise run dev:format   # Format code
 bin/netbox-extractor
 ```
 

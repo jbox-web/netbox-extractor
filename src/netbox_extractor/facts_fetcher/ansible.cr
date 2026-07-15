@@ -5,6 +5,12 @@ module NetboxExtractor
 
       SSH_ARGS = ""
 
+      # Hard cap on ansible-playbook processes running at once across the whole
+      # run (all sites, all inventories), so `--site all` cannot flood the host
+      # with one heavyweight process per inventory (K4).
+      MAX_PARALLEL_PLAYBOOKS = 4
+      PLAYBOOK_SLOTS         = Channel(Nil).new(MAX_PARALLEL_PLAYBOOKS)
+
       def self.run(site)
         facts_fetcher = new(site)
         facts_fetcher.run
@@ -101,6 +107,7 @@ module NetboxExtractor
         inventory_file = generate_ansible_inventory(inventory)
         playbook = generate_ansible_playbook
         ansible_config = generate_ansible_config
+        generated = [inventory_file, playbook, ansible_config]
 
         args = ["--flush-cache", "--timeout", "#{@timeout}", "--inventory", inventory_file, playbook]
 
@@ -108,15 +115,23 @@ module NetboxExtractor
 
         Log.debug { "Running command: ansible-playbook #{args} | #{env}" }
 
-        status = Process.run("ansible-playbook",
-          shell: true,
-          output: STDOUT,
-          error: STDERR,
-          args: args,
-          env: env
-        )
+        PLAYBOOK_SLOTS.send(nil)
 
-        raise "ansible-playbook exited with status #{status.exit_code}" unless status.success?
+        begin
+          status = Process.run("ansible-playbook",
+            shell: true,
+            output: STDOUT,
+            error: STDERR,
+            args: args,
+            env: env
+          )
+
+          raise "ansible-playbook exited with status #{status.exit_code}" unless status.success?
+        ensure
+          PLAYBOOK_SLOTS.receive
+          # Never leak the generated temp files, even on failure (G1).
+          generated.each { |path| File.delete?(path) }
+        end
       end
 
       private def generate_ansible_inventory(inventory)
@@ -162,15 +177,10 @@ module NetboxExtractor
       end
 
       private def generate_file(data, prefix, suffix)
-        tempfile = File.tempfile("#{prefix}-#{@site.id}")
-
-        File.open(tempfile.path, "w") do |f|
-          f.puts data
-        end
-
-        filepath = "#{tempfile.path}.#{suffix}"
-        FileUtils.mv(tempfile.path, filepath)
-        filepath
+        tempfile = File.tempfile("#{prefix}-#{@site.id}", ".#{suffix}")
+        tempfile.puts data
+        tempfile.close
+        tempfile.path
       end
     end
   end
