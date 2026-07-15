@@ -52,14 +52,14 @@ module NetboxExtractor
           # log context is per fiber
           set_log_context!
 
-          icinga_dump_devices(role: role.name, filename: role.filename)
+          icinga_dump_devices(role: role.name)
         end
 
         NetboxExtractor::Concurrency.each_isolated(@site.icinga.include_vm_roles, "Icinga vm configs (site #{@site.id})") do |role|
           # log context is per fiber
           set_log_context!
 
-          icinga_dump_vms(role: role.name, os: role.os, filename: role.filename)
+          icinga_dump_vms(role: role.name, os: role.os)
         end
 
         NetboxExtractor::Concurrency.each_isolated(@site.icinga.check_vhosts, "Icinga vhost configs (site #{@site.id})") do |check_vhost|
@@ -80,7 +80,7 @@ module NetboxExtractor
         Log.info { "Swapped generated Icinga config into #{final_path}" }
       end
 
-      private def icinga_dump_devices(role, filename = nil)
+      private def icinga_dump_devices(role)
         inventory = @device_inventory.fetch_devices(role: role)
 
         if inventory.empty?
@@ -91,7 +91,7 @@ module NetboxExtractor
         end
       end
 
-      private def icinga_dump_vms(role, os, filename)
+      private def icinga_dump_vms(role, os)
         inventory = @vm_inventory.fetch_vms(role: role, os: os)
 
         if inventory.empty?

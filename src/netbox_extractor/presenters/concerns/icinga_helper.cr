@@ -109,9 +109,9 @@ module NetboxExtractor
 
         num_cpus = 32 if num_cpus > 32
 
-        warning1 = ((num_cpus * 2) / 1).to_i
-        warning5 = ((num_cpus + 2) / 1).to_i
-        warning15 = ((num_cpus / 2) + 1).to_i
+        warning1 = num_cpus * 2
+        warning5 = num_cpus + 2
+        warning15 = num_cpus // 2 + 1
         [warning1, warning5, warning15].join(",")
       end
 
@@ -126,9 +126,9 @@ module NetboxExtractor
 
         num_cpus = 32 if num_cpus > 32
 
-        critical1 = ((num_cpus * 4) / 1).to_i
-        critical5 = ((num_cpus * 2) / 1).to_i
-        critical15 = ((num_cpus + 2) / 1).to_i
+        critical1 = num_cpus * 4
+        critical5 = num_cpus * 2
+        critical15 = num_cpus + 2
         [critical1, critical5, critical15].join(",")
       end
 

@@ -117,7 +117,7 @@ module NetboxExtractor
         Log.debug { "writing file: #{file}" }
 
         dir = File.dirname(file)
-        Dir.mkdir_p(dir) unless Dir.exists?(dir)
+        Dir.mkdir_p(dir)
 
         File.open(file, "w") do |f|
           f.puts ansible_banner

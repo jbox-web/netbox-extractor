@@ -35,7 +35,7 @@ module NetboxExtractor
 
       private def write_file(file, data)
         dirname = File.dirname(file)
-        FileUtils.mkdir_p dirname unless Dir.exists?(dirname)
+        FileUtils.mkdir_p dirname
 
         File.open(file, "w") do |f|
           f.puts data
