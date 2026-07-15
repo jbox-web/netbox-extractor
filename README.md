@@ -4,12 +4,10 @@
 [![Build Status](https://github.com/jbox-web/netbox-extractor/actions/workflows/ci.yml/badge.svg)](https://github.com/jbox-web/netbox-extractor/actions/workflows/ci.yml)
 [![GitHub Release](https://img.shields.io/github/v/release/jbox-web/netbox-extractor)](https://github.com/jbox-web/netbox-extractor/releases/latest)
 
-Extract data from Netbox (https://github.com/netbox-community/netbox).
-
-Generate :
+A Crystal CLI that extracts data from [Netbox](https://github.com/netbox-community/netbox) to generate:
 
 * Ansible inventories
-* Icinga config files
+* Icinga2 configuration files
 * Bind DNS zone files
 
 ## Installation
@@ -21,21 +19,54 @@ If you use [mise](https://mise.jdx.dev/) you can also install netbox-extractor w
 ## Usage
 
 ```sh
-Usage:
-  bin/netbox-extractor [flags...] [arg...]
-
-Generate Ansible inventories and Icinga configuration files from Netbox
-
-Flags:
-  --help     # Displays help for the current command.
-  --version  # Displays the version of the current application.
-
-Subcommands:
-  ansible    # Netbox/Ansible subcommands
-  bind       # Netbox/Bind subcommands
-  icinga     # Netbox/Icinga subcommands
-  test_api   # Netbox/Test subcommands
+netbox-extractor <subcommand> <action> [flags...]
 ```
+
+| Command                | Description                                    |
+|------------------------|------------------------------------------------|
+| `ansible generate`     | Generate Ansible inventory YAML files          |
+| `ansible fetch_facts`  | Gather Ansible facts into the shared cache     |
+| `icinga generate`      | Generate Icinga2 configuration files           |
+| `bind generate`        | Generate Bind DNS zone data                    |
+| `test_api get`         | Check connectivity to the Netbox API           |
+
+Common flags:
+
+| Flag              | Default                | Description                                            |
+|-------------------|------------------------|--------------------------------------------------------|
+| `--config`, `-c`  | `netbox-extractor.yml` | Path to the config file                                |
+| `--env`, `-e`     | `.env`                 | Path to the env file                                   |
+| `--site`, `-s`    | `all`                  | Site id to process (`all` = every site); `ansible` and `icinga` only |
+
+Examples:
+
+```sh
+# Generate Ansible + Icinga config for every configured site
+netbox-extractor ansible generate
+netbox-extractor icinga generate
+
+# Restrict to one site, with an explicit config path
+netbox-extractor icinga generate --site dc1 --config /etc/netbox-extractor.yml
+```
+
+## Configuration
+
+`netbox-extractor` is driven by a YAML config file (`netbox-extractor.yml` by
+default) plus an env file (`.env`) for secrets. See
+[`netbox-extractor.yml.example`](netbox-extractor.yml.example) for a complete,
+loadable example.
+
+* **Netbox connection** — `netbox.hostname`, `netbox.port` and `netbox.api_token`.
+  The token is typically injected from the env file, e.g.
+  `api_token: "{{ ENV['NETBOX_TOKEN_API'] }}"`.
+* **Sites** — declared inline under `sites:` or loaded from external files listed
+  in `sites_config:`. Each site lists the Netbox device/vm roles to export and,
+  for Icinga, the checks to generate.
+* **Filtering** — objects can be included/excluded per site via `include_objects`
+  and `exclude_objects`.
+* **Tag-driven behavior** — the `check-by-snmp` tag forces SNMP monitoring,
+  `check-only-ping` restricts a host to a ping check; OS detection is based on the
+  Netbox platform slug.
 
 ## Development
 
