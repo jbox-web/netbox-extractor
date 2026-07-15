@@ -3,26 +3,19 @@ module NetboxExtractor
     module InventoryMacros
       macro define_netbox_load(name, klass, method, ivar, log)
         private def load_{{name.id}}
-          results = [] of {{klass.id}}
           limit = NetboxExtractor.config.netbox.fetch_limit
-          offset = 0
-          total = 0
 
-          begin
-            loop do
-              data = {{method.id}}(limit: limit, offset: offset).value
-              total = data.count
-              results += data.results
-              offset += limit
-              Log.debug { "{{log.id}}: #{results.size}/#{total}" }
-              break if data._next.nil?
-            end
-          rescue ex : Socket::Addrinfo::Error
-            Log.error { "#{ex.message}" }
-          else
-            Log.info { "{{log.id}}: #{results.size}/#{total}" }
-            {{ivar.id}} = results
+          {{ivar.id}} = NetboxExtractor::Netbox::Pagination.load(Array({{klass.id}}), limit) do |page_limit, page_offset|
+            {{method.id}}(limit: page_limit, offset: page_offset).value
           end
+
+          Log.info { "{{log.id}}: #{ {{ivar.id}}.size }" }
+        rescue ex : NetboxClient::ApiError | IO::Error | Socket::Error | JSON::ParseException
+          # A transient load failure must never be mistaken for "zero objects":
+          # re-raise so the caller aborts before any destructive regeneration step
+          # (File.delete / rm_rf) wipes existing output (C1/C2).
+          Log.error(exception: ex) { "{{log.id}}: load failed" }
+          raise ex
         end
       end
     end
