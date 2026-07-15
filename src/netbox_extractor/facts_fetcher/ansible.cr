@@ -1,5 +1,10 @@
 module NetboxExtractor
   module FactsFetcher
+    # Runs `ansible-playbook` per inventory to gather host facts into the shared
+    # cache. Instantiated per site: it filters the existing inventory, writes
+    # temporary inventory/playbook/config files, and invokes the playbook under a
+    # global concurrency cap (`MAX_PARALLEL_PLAYBOOKS`), cleaning up temp files
+    # even on failure.
     class Ansible
       Log = ::Log.for("netbox-extractor.ansible")
 
@@ -11,6 +16,8 @@ module NetboxExtractor
       MAX_PARALLEL_PLAYBOOKS = 4
       PLAYBOOK_SLOTS         = Channel(Nil).new(MAX_PARALLEL_PLAYBOOKS)
 
+      # Builds a fetcher for `site` and runs it, gathering facts for all of the
+      # site's configured inventories.
       def self.run(site)
         facts_fetcher = new(site)
         facts_fetcher.run
@@ -24,6 +31,10 @@ module NetboxExtractor
       @caching_timeout : Int32
       @ssh_args : String
 
+      # Resolves the effective fact-gathering settings for `@site`, merging the
+      # site-level `fetch_facts` config over the global defaults. A `nil` site
+      # value inherits the global setting; a non-`nil` site value wins, including
+      # an explicit `false` that a plain `||` would wrongly drop.
       def initialize(@site : NetboxExtractor::Config::Site)
         @cache_path = NetboxExtractor.config.ansible.fetch_facts.cache_path
         @use_mitogen = NetboxExtractor.config.ansible.fetch_facts.mitogen.enabled?
@@ -49,6 +60,9 @@ module NetboxExtractor
         set_log_context!
       end
 
+      # Fetches facts for each of the site's inventories, one isolated fiber per
+      # inventory file so a single failure does not abort the others.
+      #
       # The shared fact cache is wiped once by the controller before the per-site
       # fan-out (K2), so `run` must not wipe it here — that would erase sibling
       # sites' freshly-written cache.

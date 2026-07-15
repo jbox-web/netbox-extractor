@@ -1,5 +1,8 @@
 module NetboxExtractor
   module Config
+    # Maps to the `netbox:` block: connection details and API token for the
+    # Netbox instance. `fetch_limit` is the pagination page size used by the
+    # inventory loaders.
     class Netbox
       include YAML::Serializable
 

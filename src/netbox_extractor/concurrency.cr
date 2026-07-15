@@ -14,6 +14,11 @@ module NetboxExtractor
     class PartialFailure < Exception
     end
 
+    # Runs `block` for each item on its own fiber, isolating failures: an
+    # exception in one fiber is logged and counted (via an `Atomic`) rather than
+    # crashing the fan-out. After all fibers complete, raises a single
+    # `PartialFailure` if any failed, so the caller and exit code reflect it.
+    # `what` labels the work in log and error messages.
     def self.each_isolated(items : Array(T), what : String, &block : T ->) forall T
       failures = Atomic(Int32).new(0)
 

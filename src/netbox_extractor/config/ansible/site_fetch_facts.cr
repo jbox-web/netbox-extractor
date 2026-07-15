@@ -1,6 +1,10 @@
 module NetboxExtractor
   module Config
     module Ansible
+      # Maps to `ansible.fetch_facts:` inside a site config: per-site overrides
+      # of the global fact-gathering settings. Nil-valued numeric/boolean fields
+      # inherit the corresponding `GlobalFetchFacts` value rather than forcing a
+      # default.
       class SiteFetchFacts
         include YAML::Serializable
 

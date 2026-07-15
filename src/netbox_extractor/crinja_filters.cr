@@ -11,6 +11,8 @@ module NetboxExtractor
       getter name = "icinga_string"
       getter defaults = Crinja::Variables.new
 
+      # Returns the filter target escaped for an Icinga2 double-quoted string,
+      # backslash-escaping `\`, `"` and the whitespace control characters.
       def call(arguments)
         (arguments.target.try(&.to_string) || "")
           .gsub('\\', "\\\\")
@@ -31,6 +33,8 @@ module NetboxExtractor
       getter name = "icinga_array"
       getter defaults = Crinja::Variables.new
 
+      # Returns the filter target rendered as an Icinga2 array literal, JSON-
+      # encoding each element so it is individually quoted and escaped.
       def call(arguments)
         target = arguments.target
         elements = target ? target.to_a : [] of Crinja::Value

@@ -1,8 +1,15 @@
 module NetboxExtractor
   module Controllers
+    # Orchestrates Ansible work per site: generating inventory YAML files and
+    # gathering facts. A `site` of `"all"` fans out over every configured site
+    # with per-fiber failure isolation.
     module Ansible
       Log = ::Log.for("netbox-extractor.ansible")
 
+      # Generates Ansible inventory files for the selected site, or for every
+      # configured site (isolated per fiber) when `nbe_site` is `"all"`. Raises
+      # when a specific, non-`"all"` site id is unknown.
+      #
       # `"all"` is a reserved site selector meaning "every configured site"; a
       # site whose id is literally "all" can therefore not be selected alone (D4).
       def self.generate_ansible_inventories(nbe_site)
@@ -19,6 +26,10 @@ module NetboxExtractor
         end
       end
 
+      # Gathers Ansible facts for the selected site, or for every configured site
+      # (isolated per fiber) when `nbe_site` is `"all"`. Wipes the shared fact
+      # cache once up front, then delegates each site to
+      # `NetboxExtractor::FactsFetcher::Ansible`. Raises on an unknown site id.
       def self.fetch_ansible_facts(nbe_site)
         # Wipe the shared fact cache once, before the per-site fan-out: doing it
         # inside each site's run would let concurrent sites erase each other's

@@ -1,5 +1,8 @@
 module NetboxExtractor
   module Netbox
+    # Shared host-filtering mixin: drops objects with unsafe/blank names, applies
+    # the site's `include_objects`/`exclude_objects` lists, and keeps only
+    # powered-on objects. Expects the including type to provide `@site`.
     module InventoryFilters
       # A nil or path-unsafe name yields filenames like ".conf" (two such objects
       # collide and overwrite) or lets a "/"/".." escape the output dir, so such

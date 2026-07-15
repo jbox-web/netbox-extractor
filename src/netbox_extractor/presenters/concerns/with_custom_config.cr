@@ -1,6 +1,11 @@
 module NetboxExtractor
   module Presenters
+    # Looks up per-host check overrides declared in the site's Icinga config.
+    # Mixed into presenters to expose `check_<service>?` predicates and
+    # `find_custom_config_for` for matching a host against `checks_config`.
     module WithCustomConfig
+      # Generates a `check_<service>?` method returning the service's custom check
+      # configuration as a hash for the current `@host`, or `nil` when unset.
       macro define_method_check_service(service)
         # This method looks for custom check configuration.
         # It returns nil if no custom configuration is found,

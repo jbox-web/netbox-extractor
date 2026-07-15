@@ -1,9 +1,13 @@
 module NetboxExtractor
   module Config
     module Icinga
+      # One entry of `icinga.check_vhosts:`: a group of HTTP vhost checks written
+      # into the `subdir` folder of the site's Icinga2 zone.
       class SiteCheckVhosts
         include YAML::Serializable
 
+        # A single HTTP vhost check (one `vhosts:` entry). Fields map to
+        # `check_http` parameters; SSL and certificate checking default to on.
         class Vhost
           include YAML::Serializable
 
@@ -19,6 +23,9 @@ module NetboxExtractor
           property notification_period : String?
           property tags : Array(String)?
 
+          # String-keyed hash of this vhost's settings for template rendering.
+          # Optional fields are only included when set, so the template can test
+          # for presence.
           def to_h
             hash = {
               "host"            => host,
@@ -61,6 +68,7 @@ module NetboxExtractor
             hash
           end
 
+          # Basename of the generated Icinga2 config file for this vhost.
           def icinga_filename
             "#{host}.conf"
           end

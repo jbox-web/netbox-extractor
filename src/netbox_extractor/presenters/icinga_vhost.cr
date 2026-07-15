@@ -2,6 +2,10 @@ require "./concerns/*"
 
 module NetboxExtractor
   module Presenters
+    # Renders an Icinga virtual-host check from a `SiteCheckVhosts::Vhost` config
+    # entry using the `icinga/generic-vhost.j2` template. Output is written under
+    # the site's `custom-vhosts/<subdir>/` directory; locals carry the vhost
+    # fields plus the site zone and `subdir`.
     class IcingaVhost
       include Templatable
 
@@ -13,6 +17,8 @@ module NetboxExtractor
       @host : NetboxExtractor::Config::Icinga::SiteCheckVhosts::Vhost
       @subdir : String
 
+      # Binds the presenter to its site, vhost config, and target `@subdir`,
+      # loading the generic-vhost template and computing the destination file.
       def initialize(@site, @host, @subdir)
         super()
 

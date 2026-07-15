@@ -1,5 +1,9 @@
 module NetboxExtractor
   module Config
+    # One entry of the `sites:` list (or an external `sites_config:` file):
+    # configuration for a single Netbox site, bundling its `ansible` and `icinga`
+    # sub-configs plus the global object include/exclude filters. `id` is the
+    # slug used to derive per-site output directories.
     class Site
       include YAML::Serializable
 
@@ -29,14 +33,20 @@ module NetboxExtractor
         raise ValidationError.new("Site '#{id}': duplicate Ansible inventory filename(s): #{dupes.join(", ")}")
       end
 
+      # Name of the Icinga2 zone directory for this site (its `id`).
       def icinga_zone_dir
         id
       end
 
+      # Absolute directory where this site's Ansible inventories are written,
+      # under the global `ansible.inventories_dir` keyed by site `id`.
       def ansible_inventory_path
         NetboxExtractor.config.ansible.inventories_path.join(id)
       end
 
+      # Absolute directory where this site's Icinga2 zone files are written.
+      # Returns `icinga_staging_path` when a staging build is in progress,
+      # otherwise the live directory under global `icinga.zones_dir`.
       def icinga_zones_path
         icinga_staging_path || NetboxExtractor.config.icinga.zones_path.join(id)
       end

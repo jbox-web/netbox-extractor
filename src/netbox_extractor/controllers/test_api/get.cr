@@ -1,9 +1,16 @@
 module NetboxExtractor
   module Controllers
+    # Diagnostic controller that exercises the Netbox REST API surface.
     module TestApi
+      # Smoke-tests read-only (`GET`/`list`) endpoints across every Netbox API
+      # group, logging the result count of each call. Used to verify client
+      # connectivity and OpenAPI compatibility against a live Netbox instance.
       module GET
         Log = ::Log.for("netbox-extractor.test_api.get")
 
+        # Invokes the given API call block, logging the call and its result on
+        # success or the exception message on failure. Failures are swallowed so
+        # one broken endpoint does not abort the rest of the smoke test.
         def self.with_debug(api, method, &)
           Log.info { "Calling #{api}.#{method}" }
 
@@ -16,6 +23,8 @@ module NetboxExtractor
           end
         end
 
+        # Logs the size of a returned collection (using `size` for arrays and
+        # `count` otherwise) at info level and the full YAML dump at debug level.
         def self.log_result(result)
           if result.is_a?(Array)
             Log.info { "count: #{result.size}" }
@@ -25,6 +34,7 @@ module NetboxExtractor
           Log.debug { YAML.dump(result) }
         end
 
+        # Lists every endpoint under the Netbox `circuits` API group.
         def self.test_circuits_api
           client = NetboxExtractor.client.circuits
           with_debug("circuits", "circuit_group_assignments.list") { client.circuit_group_assignments.list.value }
@@ -40,6 +50,7 @@ module NetboxExtractor
           with_debug("circuits", "virtual_circuits.list") { client.virtual_circuits.list.value }
         end
 
+        # Lists every endpoint under the Netbox `core` API group.
         def self.test_core_api
           client = NetboxExtractor.client.core
           with_debug("core", "data_files.list") { client.data_files.list.value }
@@ -49,6 +60,8 @@ module NetboxExtractor
           with_debug("core", "object_types.list") { client.object_types.list.value }
         end
 
+        # Lists every endpoint under the Netbox `dcim` (physical infrastructure)
+        # API group.
         def self.test_dcim_api
           client = NetboxExtractor.client.dcim
           with_debug("dcim", "cable_terminations.list") { client.cable_terminations.list.value }
@@ -97,6 +110,7 @@ module NetboxExtractor
           with_debug("dcim", "virtual_device_contexts.list") { client.virtual_device_contexts.list.value }
         end
 
+        # Lists every endpoint under the Netbox `extras` API group.
         def self.test_extras_api
           client = NetboxExtractor.client.extras
           with_debug("extras", "bookmarks.list") { client.bookmarks.list.value }
@@ -122,6 +136,8 @@ module NetboxExtractor
           with_debug("extras", "webhooks.list") { client.webhooks.list.value }
         end
 
+        # Lists every endpoint under the Netbox `ipam` (IP address management)
+        # API group.
         def self.test_ipam_api
           client = NetboxExtractor.client.ipam
           with_debug("ipam", "aggregates.list") { client.aggregates.list.value }
@@ -149,6 +165,7 @@ module NetboxExtractor
           with_debug("ipam", "vrfs.list") { client.vrfs.list.value }
         end
 
+        # Lists every endpoint under the Netbox `tenancy` API group.
         def self.test_tenancy_api
           client = NetboxExtractor.client.tenancy
           with_debug("tenancy", "contact_assignments.list") { client.contact_assignments.list.value }
@@ -159,6 +176,7 @@ module NetboxExtractor
           with_debug("tenancy", "tenants.list") { client.tenants.list.value }
         end
 
+        # Lists every endpoint under the Netbox `users` API group.
         def self.test_users_api
           client = NetboxExtractor.client.users
           with_debug("users", "groups.list") { client.groups.list.value }
@@ -167,6 +185,7 @@ module NetboxExtractor
           with_debug("users", "users.list") { client.users.list.value }
         end
 
+        # Lists every endpoint under the Netbox `virtualization` API group.
         def self.test_virtualization_api
           client = NetboxExtractor.client.virtualization
           with_debug("virtualization", "cluster_groups.list") { client.cluster_groups.list.value }
@@ -177,6 +196,7 @@ module NetboxExtractor
           with_debug("virtualization", "virtual_machines.list") { client.virtual_machines.list.value }
         end
 
+        # Lists every endpoint under the Netbox `vpn` API group.
         def self.test_vpn_api
           client = NetboxExtractor.client.vpn
           with_debug("vpn", "ike_policies.list") { client.ike_policies.list.value }
@@ -191,6 +211,7 @@ module NetboxExtractor
           with_debug("vpn", "tunnels.list") { client.tunnels.list.value }
         end
 
+        # Lists every endpoint under the Netbox `wireless` API group.
         def self.test_wireless_api
           client = NetboxExtractor.client.wireless
           with_debug("wireless", "wireless_lan_groups.list") { client.wireless_lan_groups.list.value }

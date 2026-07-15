@@ -1,9 +1,14 @@
 module NetboxExtractor
   module Config
     module Icinga
+      # Maps to the `icinga:` block of a site config: the Icinga2 monitoring
+      # definition for a site — which device/VM roles to monitor, per-host check
+      # tuning (`checks_config`), HTTP vhost checks, and standalone custom hosts.
       class Site
         include YAML::Serializable
 
+        # One entry of `icinga.check_custom_hosts:`: a host not derived from
+        # Netbox, monitored explicitly by IP with the given `check_type`.
         class CustomHost
           include YAML::Serializable
 
@@ -11,6 +16,7 @@ module NetboxExtractor
           property ip : String
           property check_type : String
 
+          # Flat string hash of this host's fields, for template rendering.
           def to_h
             {
               "host"       => host,
@@ -19,6 +25,8 @@ module NetboxExtractor
             }
           end
 
+          # Destination `.conf` path for this custom host within `site`'s zone
+          # directory, under a `custom-hosts/` subfolder.
           def icinga_dest_file(site)
             site.icinga_zones_path.join("custom-hosts", "#{host}.conf")
           end

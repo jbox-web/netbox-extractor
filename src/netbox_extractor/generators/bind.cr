@@ -1,17 +1,23 @@
 module NetboxExtractor
   module Generators
+    # Bind DNS zone generator. Currently a stub: it loads IPAM addresses and dumps
+    # them to STDOUT as YAML, writing no actual zone file.
     class Bind
       Log = ::Log.for("netbox-extractor.bind")
 
+      # Convenience entry point: builds the IPAM inventory and runs the generator.
       def self.run
         ipam_inventory = NetboxExtractor::Netbox::IpamInventory.new
         inventory_generator = new(ipam_inventory)
         inventory_generator.run
       end
 
+      # Injects the (already constructed) IPAM inventory, allowing tests to supply
+      # a double.
       def initialize(@ipam_inventory : NetboxExtractor::Netbox::IpamInventory)
       end
 
+      # Loads the IPAM inventory and dumps the IP list to STDOUT (stub behaviour).
       def run
         Log.warn { "Bind zone generation is a stub: it dumps the IP list to STDOUT and writes no zone file" }
 

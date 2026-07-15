@@ -1,5 +1,9 @@
 module NetboxExtractor
   module Config
+    # Top-level configuration deserialized from `netbox-extractor.yml`. Holds the
+    # global `logger`/`netbox`/`ansible`/`icinga` settings plus the per-site
+    # configs, which may be inlined under `sites:` or loaded from external files
+    # listed in `sites_config:`.
     class Base
       include YAML::Serializable
 
@@ -10,6 +14,9 @@ module NetboxExtractor
       property sites : Array(Site) = [] of Site
       property sites_config : Array(String) = [] of String
 
+      # Loads each external site file referenced by `sites_config:` and appends
+      # the parsed `Site` to `sites`. Raises `ValidationError` if a referenced
+      # file is missing.
       def after_initialize
         @sites_config.each do |config_file|
           file = File.expand_path(config_file)

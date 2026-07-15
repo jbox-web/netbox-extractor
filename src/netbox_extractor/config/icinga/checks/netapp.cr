@@ -2,9 +2,14 @@ module NetboxExtractor
   module Config
     module Icinga
       module Checks
+        # Maps to `check_netapp:` under a host's `checks_config` entry: NetApp
+        # storage check covering volume usage, optional aggregate thresholds, and
+        # optional REST API access.
         class Netapp
           include YAML::Serializable
 
+          # Warning/critical usage thresholds (percentage strings) for NetApp
+          # aggregates, under `check_netapp.aggregates:`.
           class Aggregates
             include YAML::Serializable
 
@@ -12,6 +17,8 @@ module NetboxExtractor
             property critical : String = "85%"
           end
 
+          # Connection details for the NetApp REST API, under
+          # `check_netapp.check_api:`.
           class CheckApi
             include YAML::Serializable
 
@@ -25,6 +32,8 @@ module NetboxExtractor
           property aggregates : Aggregates?
           property check_api : CheckApi?
 
+          # String-keyed hash of this check's parameters for template rendering.
+          # Nested `aggregates` and `check_api` are only included when configured.
           def to_h
             hash = {
               "volumes"        => volumes,

@@ -1,4 +1,6 @@
 module NetboxExtractor
+  # Crinja template rendering helpers. Owns the shared `CRINJA` environment (with
+  # the Icinga-escaping filters) and a thread-safe cache of compiled templates.
   module Utils
     extend self
 
@@ -17,6 +19,9 @@ module NetboxExtractor
     @@template_cache = {} of String => Crinja::Template
     @@cache_mutex = Mutex.new
 
+    # Renders `template` with `variables`, compiling and caching it keyed by its
+    # source string on first use. The cache is guarded by a `Mutex` so concurrent
+    # fibers share one compiled `Crinja::Template` per source.
     def render_template(template, variables)
       compiled = @@cache_mutex.synchronize { @@template_cache[template] ||= CRINJA.from_string(template) }
       compiled.render(variables)

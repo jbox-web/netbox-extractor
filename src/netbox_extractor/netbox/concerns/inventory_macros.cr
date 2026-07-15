@@ -1,6 +1,15 @@
 module NetboxExtractor
   module Netbox
+    # Mixin that generates the boilerplate `load_<name>` method each inventory
+    # uses to pull a Netbox list endpoint into an instance variable.
     module InventoryMacros
+      # Defines a `private def load_{name}` that paginates `method` via
+      # `Pagination.load` into `ivar` and logs the loaded count.
+      #
+      # Transient failures (`NetboxClient::ApiError`, `IO::Error`, `Socket::Error`,
+      # `JSON::ParseException`) are logged and re-raised so the caller aborts before
+      # any destructive regeneration wipes existing output (C1/C2) — an empty result
+      # must never be confused with a load failure.
       macro define_netbox_load(name, klass, method, ivar, log)
         private def load_{{name.id}}
           limit = NetboxExtractor.config.netbox.fetch_limit

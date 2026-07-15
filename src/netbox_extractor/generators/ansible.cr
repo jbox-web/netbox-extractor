@@ -1,8 +1,13 @@
 module NetboxExtractor
   module Generators
+    # Generates per-role Ansible inventory YAML files for a site from its Netbox
+    # devices and VMs. Each output file preserves its existing user-editable
+    # `vars:` block and rewrites only the `hosts:` block.
     class Ansible
       Log = ::Log.for("netbox-extractor.ansible")
 
+      # Convenience entry point: builds the device and VM inventories for `site`
+      # and runs the generator.
       def self.run(site)
         device_inventory = NetboxExtractor::Netbox::DeviceInventory.new(site)
         vm_inventory = NetboxExtractor::Netbox::VmInventory.new(site)
@@ -10,12 +15,15 @@ module NetboxExtractor
         generator.run
       end
 
+      # Injects the site config and the (already constructed) device/VM
+      # inventories, allowing tests to supply doubles.
       def initialize(@site : NetboxExtractor::Config::Site,
                      @device_inventory : NetboxExtractor::Netbox::DeviceInventory,
                      @vm_inventory : NetboxExtractor::Netbox::VmInventory)
         set_log_context!
       end
 
+      # Loads both inventories then writes one inventory file per configured role.
       def run
         @device_inventory.load!
         @vm_inventory.load!

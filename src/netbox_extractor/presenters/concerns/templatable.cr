@@ -1,11 +1,18 @@
 module NetboxExtractor
   module Presenters
+    # Renders an Icinga template through Crinja and writes the result to disk.
+    # Mixed into every Icinga presenter; expects the host class to provide
+    # `@template`, `@icinga_filename`, and a `load_template_locals!` hook that
+    # populates `@template_locals`.
     module Templatable
       alias TemplateLocals = NetboxExtractor::RecursiveHash
 
+      # Initializes the shared `@template_locals` accumulator (empty by default).
       def initialize(@template_locals = TemplateLocals.new)
       end
 
+      # Fills the template locals, renders `@template`, and writes the output to
+      # `@icinga_filename` (creating parent directories as needed).
       def save!
         load_template_locals!
 

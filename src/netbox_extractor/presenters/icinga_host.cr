@@ -2,6 +2,11 @@ require "./concerns/*"
 
 module NetboxExtractor
   module Presenters
+    # Renders the Icinga host object for a Netbox device or VM.
+    # Selects a role-specific template (`icinga/<role>.j2`) when one exists,
+    # falling back to `icinga/generic-host.j2`, and enriches the output with
+    # cached Ansible facts loaded from the facts cache. Combines `Templatable`,
+    # `WithCustomConfig`, and `IcingaHelper`.
     class IcingaHost
       include Templatable
       include WithCustomConfig
@@ -15,6 +20,8 @@ module NetboxExtractor
       @host : NetboxClient::DeviceWithConfigContext | NetboxClient::VirtualMachineWithConfigContext
       @ansible_facts : Hash(String, JSON::Any)?
 
+      # Binds the presenter to its site and Netbox host, resolving the role-based
+      # or generic template, the output path, and any cached Ansible facts.
       def initialize(@site, @host)
         super()
 

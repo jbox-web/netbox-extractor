@@ -2,6 +2,9 @@ require "./concerns/*"
 
 module NetboxExtractor
   module Presenters
+    # Renders a manually declared Icinga host from a `Config::Icinga::Site::CustomHost`
+    # entry (not sourced from Netbox), via the `icinga/custom-host.j2` template.
+    # Template locals come straight from the config host's fields plus the site zone.
     class IcingaCustomHost
       include Templatable
 
@@ -12,6 +15,8 @@ module NetboxExtractor
       @site : NetboxExtractor::Config::Site
       @host : NetboxExtractor::Config::Icinga::Site::CustomHost
 
+      # Binds the presenter to its site and custom-host config, loading the
+      # custom-host template and resolving the destination file for the site.
       def initialize(@site, @host)
         super()
 

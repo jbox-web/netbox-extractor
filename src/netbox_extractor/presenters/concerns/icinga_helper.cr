@@ -1,6 +1,12 @@
 module NetboxExtractor
   module Presenters
+    # Derives Icinga host template values from Netbox metadata and cached Ansible
+    # facts. Mixed into `IcingaHost`; populates `@template_locals` with zone,
+    # hostname, check type, OS details, disk partitions, CPU-scaled load
+    # thresholds, and per-service check data (drac, esx, mysql, etc.).
     module IcingaHelper
+      # Generates a `load_template_locals_check_<service>` helper that merges the
+      # named service's custom check data into `locals` under `key` when present.
       macro define_method_load_template_locals(service, key)
         # This method extends @template_locals with custom check configuration if any
         private def load_template_locals_check_{{service.id}}(locals)

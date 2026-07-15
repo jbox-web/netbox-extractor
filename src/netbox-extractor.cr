@@ -20,16 +20,24 @@ Crystal::Env.default("development")
 # Load stacker
 require "./netbox_extractor/**"
 
+# Top-level namespace and application entry point. Holds the process-wide
+# `config` and `client` singletons (both require explicit initialisation via
+# `load_config`/`init_app!`), exposes the version string, and runs the CLI.
 module NetboxExtractor
   extend NetboxExtractor::Logger
 
   VERSION = {{ `shards version #{__DIR__}`.chomp.stringify }}
   GIT_REF = {{ `git log -n 1 --format="%H" | head -c 8`.chomp.stringify }}
 
+  # Human-readable version string combining the shard `VERSION` and the short
+  # `GIT_REF` of the build commit.
   def self.version
     "#{VERSION} (#{GIT_REF})"
   end
 
+  # Loads the `.env` file, renders the YAML config template (which may reference
+  # `ENV`) through Crinja, deserialises it into `Config::Base`, validates it, and
+  # stores it as the `config` singleton. Raises if the template fails to render.
   def self.load_config(config_path, env_path)
     Dotenv.load File.expand_path(env_path)
     config_template = File.read(File.expand_path(config_path))
@@ -40,12 +48,14 @@ module NetboxExtractor
     raise "Failed to render config template #{config_path}: #{ex.message}"
   end
 
+  # Sets the process-wide configuration singleton.
   def self.config=(config : Config::Base)
     @@config = config
   end
 
   @@config : Config::Base? = nil
 
+  # The loaded configuration singleton. Raises if `load_config` has not run yet.
   def self.config : Config::Base
     @@config || raise "Configuration not loaded — call load_config first"
   end
@@ -59,11 +69,14 @@ module NetboxExtractor
     @@client || raise "Netbox client not initialised — call init_app! first"
   end
 
+  # Eagerly initialises the application: configures logging and builds the shared
+  # Netbox client. Must be called after `load_config` and before any controller.
   def self.init_app!
     setup_log!
     setup_netbox_api!
   end
 
+  # Builds and stores the shared `NetboxClient::Client` from the loaded config.
   def self.setup_netbox_api!
     @@client = build_netbox_client
   end

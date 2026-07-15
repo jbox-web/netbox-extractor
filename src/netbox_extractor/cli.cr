@@ -1,8 +1,13 @@
 module NetboxExtractor
+  # Root command of the admiral-based CLI. Wires the `ansible`, `icinga`, `bind`
+  # and `test_api` subcommand trees and prints help when invoked bare.
   class CLI < Admiral::Command
+    # Parent command grouping the Netbox/Ansible subcommands.
     class Ansible < Admiral::Command
       define_help description: "Netbox/Ansible subcommands"
 
+      # Loads config, initialises the app and generates Ansible inventory files
+      # for the selected site (`all` by default).
       class Generate < Admiral::Command
         define_help description: "Generate Ansible inventories"
 
@@ -31,6 +36,8 @@ module NetboxExtractor
         end
       end
 
+      # Loads config, initialises the app and fetches Ansible facts for the
+      # selected site.
       class FetchFacts < Admiral::Command
         define_help description: "Fetch Ansible facts"
 
@@ -67,9 +74,12 @@ module NetboxExtractor
       end
     end
 
+    # Parent command grouping the Netbox/Icinga subcommands.
     class Icinga < Admiral::Command
       define_help description: "Netbox/Icinga subcommands"
 
+      # Loads config, initialises the app and generates Icinga2 configuration
+      # files for the selected site.
       class Generate < Admiral::Command
         define_help description: "Generate Icinga configuration files"
 
@@ -105,9 +115,11 @@ module NetboxExtractor
       end
     end
 
+    # Parent command grouping the Netbox/Bind subcommands.
     class Bind < Admiral::Command
       define_help description: "Netbox/Bind subcommands"
 
+      # Loads config, initialises the app and generates Bind DNS zone files.
       class Generate < Admiral::Command
         define_help description: "Generate Bind configuration files"
 
@@ -137,9 +149,12 @@ module NetboxExtractor
       end
     end
 
+    # Parent command grouping the Netbox API connectivity-test subcommands.
     class TestApi < Admiral::Command
       define_help description: "Netbox/Test subcommands"
 
+      # Exercises a read-only GET call against every Netbox API group to verify
+      # connectivity and authentication.
       class GET < Admiral::Command
         define_help description: "Test GET Netbox API"
 

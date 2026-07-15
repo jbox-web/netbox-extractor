@@ -2,6 +2,10 @@ require "./concerns/*"
 
 module NetboxExtractor
   module Presenters
+    # Builds the Ansible inventory entry for a single Netbox host (device or VM).
+    # Produces a `TemplateLocals` hash keyed by hostname, carrying connection
+    # variables plus Netbox tags/OS metadata; Linux hosts additionally get NFS
+    # check data merged in via `WithCustomConfig`.
     class Ansible
       include Templatable
       include WithCustomConfig
@@ -11,10 +15,14 @@ module NetboxExtractor
       @site : NetboxExtractor::Config::Site
       @host : NetboxClient::DeviceWithConfigContext | NetboxClient::VirtualMachineWithConfigContext
 
+      # Binds the presenter to a `Config::Site` and the Netbox `@host` to render.
       def initialize(@site, @host)
         super()
       end
 
+      # Returns the host's Ansible inventory data as `TemplateLocals`.
+      # Dispatches to the Linux-specific variant (adding NFS check vars) when
+      # `netbox_linux?`, otherwise the default host-vars mapping.
       def to_ansible
         return to_linux if @host.netbox_linux?
         to_default

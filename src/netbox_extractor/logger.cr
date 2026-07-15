@@ -1,4 +1,6 @@
 module NetboxExtractor
+  # Colored logging setup. Defines the severity-to-color mapping and the log
+  # formatter, and binds the configured level and backend (STDOUT or a file).
   module Logger
     extend self
 
@@ -14,6 +16,8 @@ module NetboxExtractor
     ColorLogging.define_formatter MyColorFormat, "#{timestamp} #{severity} - #{source} #{context(before: "[", after: "]")} " \
                                                  "#{message}#{data(before: " -- ")}#{exception}"
 
+    # Configures the global `Log` from `config.logger`: assigns severity colors,
+    # then binds every source at the configured level to the chosen backend.
     def setup_log!
       MyColorFormat.with_colored_severity(Log::Severity::Trace, :cyan)
       MyColorFormat.with_colored_severity(Log::Severity::Debug, :light_cyan)
