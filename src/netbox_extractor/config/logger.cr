@@ -3,7 +3,7 @@ module NetboxExtractor
     class Logger
       include YAML::Serializable
 
-      property level : String = "debug"
+      property level : String = "info"
       property log_file : String = "stdout"
     end
   end

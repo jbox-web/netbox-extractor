@@ -36,6 +36,8 @@ module NetboxExtractor
     config_file = NetboxExtractor::Utils.render_template(config_template, {"ENV" => ENV.to_h})
     self.config = Config::Base.from_yaml(config_file)
     config.validate!
+  rescue ex : Crinja::Error
+    raise "Failed to render config template #{config_path}: #{ex.message}"
   end
 
   def self.config=(config : Config::Base)
@@ -50,10 +52,11 @@ module NetboxExtractor
 
   @@client : NetboxClient::Client?
 
-  # The shared, per-instance Netbox client. Built from the loaded config the
-  # first time it is needed (or eagerly by `setup_netbox_api!`).
+  # The shared, per-instance Netbox client, built eagerly by `init_app!`.
+  # Requiring explicit init avoids a lazy `||=` that could race if `client` were
+  # ever first touched from concurrent fibers (K5).
   def self.client : NetboxClient::Client
-    @@client ||= build_netbox_client
+    @@client || raise "Netbox client not initialised — call init_app! first"
   end
 
   def self.init_app!
@@ -68,7 +71,9 @@ module NetboxExtractor
   private def self.build_netbox_client : NetboxClient::Client
     cfg = NetboxClient::Configuration.new
     cfg.scheme = config.netbox.http_scheme
-    cfg.host = config.netbox.hostname
+    # Fold the configured port into the host authority; it was previously
+    # advertised but ignored, silently unreachable on a non-standard port (D5).
+    cfg.host = "#{config.netbox.hostname}:#{config.netbox.port}"
     cfg.debugging = config.netbox.debug?
     cfg.api_key[:Authorization] = config.netbox.api_token
     cfg.api_key_prefix[:Authorization] = "Token"

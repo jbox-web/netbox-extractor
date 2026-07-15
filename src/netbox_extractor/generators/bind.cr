@@ -13,6 +13,8 @@ module NetboxExtractor
       end
 
       def run
+        Log.warn { "Bind zone generation is a stub: it dumps the IP list to STDOUT and writes no zone file" }
+
         @ipam_inventory.load!
         generate_files
       end

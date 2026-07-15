@@ -28,7 +28,13 @@ module NetboxExtractor
     end
 
     private def log_level
-      SEVERITY_MAP[config.logger.level]? || SEVERITY_MAP["info"]
+      severity_for(config.logger.level)
+    end
+
+    # Case-insensitive so "Info"/"DEBUG" resolve instead of silently falling
+    # back to info (C10).
+    def severity_for(level : String) : Log::Severity
+      SEVERITY_MAP[level.downcase]? || Log::Severity::Info
     end
 
     private def logger
@@ -36,7 +42,11 @@ module NetboxExtractor
     end
 
     private def log_file
-      log_to_stdout? ? STDOUT : File.open(config.logger.log_file, "a")
+      return STDOUT if log_to_stdout?
+
+      File.open(config.logger.log_file, "a")
+    rescue ex : IO::Error
+      raise "Cannot open log_file '#{config.logger.log_file}': #{ex.message}"
     end
 
     private def log_to_stdout?

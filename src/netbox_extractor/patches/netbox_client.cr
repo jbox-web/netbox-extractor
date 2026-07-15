@@ -71,7 +71,7 @@ module NetboxExtractor
       end
 
       def netbox_powered_on?
-        status.try &.value == "active"
+        status.try(&.value) == "active"
       end
     end
   end

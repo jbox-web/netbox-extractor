@@ -5,7 +5,7 @@ module NetboxExtractor
         class Drac
           include YAML::Serializable
 
-          property exclude_checks : Array(String)
+          property exclude_checks : Array(String) = [] of String
 
           def to_h
             {"exclude_checks" => exclude_checks}

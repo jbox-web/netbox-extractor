@@ -21,7 +21,7 @@ module NetboxExtractor
           end
 
           property volumes : Array(String)
-          property exclude_checks : Array(String)
+          property exclude_checks : Array(String) = [] of String
           property aggregates : Aggregates?
           property check_api : CheckApi?
 

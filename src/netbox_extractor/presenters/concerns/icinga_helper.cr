@@ -133,8 +133,10 @@ module NetboxExtractor
       end
 
       private def ansible_os_name
-        os_name = @ansible_facts.try &.dig?("ansible_lsb", "description")
-        os_name = os_name.nil? ? @host.netbox_os_name : os_name.as_s
+        fact = @ansible_facts.try &.dig?("ansible_lsb", "description")
+        # Fall back to the (non-nil) Netbox platform when the fact is absent or
+        # not a string, so this never returns nil / raises on as_s (C6).
+        os_name = fact.try(&.as_s?) || @host.netbox_os_name
 
         case @host
         when NetboxClient::DeviceWithConfigContext

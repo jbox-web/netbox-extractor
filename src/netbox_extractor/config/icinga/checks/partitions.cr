@@ -5,7 +5,7 @@ module NetboxExtractor
         class Partitions
           include YAML::Serializable
 
-          property exclude_volumes : Array(String)
+          property exclude_volumes : Array(String) = [] of String
 
           def to_h
             {"exclude_volumes" => exclude_volumes}
