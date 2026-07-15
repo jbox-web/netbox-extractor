@@ -35,18 +35,14 @@ module NetboxExtractor
         set_log_context!
       end
 
+      # The shared fact cache is wiped once by the controller before the per-site
+      # fan-out (K2), so `run` must not wipe it here — that would erase sibling
+      # sites' freshly-written cache.
       def run
-        FileUtils.rm_rf @cache_path
-        FileUtils.mkdir_p @cache_path
-
-        WaitGroup.wait do |wg|
-          @site.ansible.fetch_facts.inventories.each do |inventory_file|
-            wg.spawn do
-              # log context is per fiber
-              set_log_context!
-              fetch_facts(inventory_file)
-            end
-          end
+        NetboxExtractor::Concurrency.each_isolated(@site.ansible.fetch_facts.inventories, "Ansible facts (site #{@site.id})") do |inventory_file|
+          # log context is per fiber
+          set_log_context!
+          fetch_facts(inventory_file)
         end
       end
 

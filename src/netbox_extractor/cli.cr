@@ -172,31 +172,7 @@ module NetboxExtractor
         end
       end
 
-      class POST < Admiral::Command
-        define_help description: "Test POST Netbox API"
-
-        define_flag config : String,
-          description: "Path to config file",
-          long: "config",
-          short: "c",
-          default: "netbox-extractor.yml"
-
-        define_flag env : String,
-          description: "Path to env file",
-          long: "env",
-          short: "e",
-          default: ".env"
-
-        def run
-          NetboxExtractor.load_config(flags.config, flags.env)
-          NetboxExtractor.init_app!
-
-          NetboxExtractor::Controllers::TestApi::POST.create_vms
-        end
-      end
-
       register_sub_command get, GET, description: "Test GET Netbox API"
-      register_sub_command post, POST, description: "Test POST Netbox API"
 
       def run
         puts help

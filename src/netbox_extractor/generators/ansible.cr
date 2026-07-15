@@ -27,26 +27,18 @@ module NetboxExtractor
       end
 
       private def generate_files
-        WaitGroup.wait do |wg|
-          @site.ansible.include_device_roles.each do |role|
-            wg.spawn do
-              # log context is per fiber
-              set_log_context!
+        NetboxExtractor::Concurrency.each_isolated(@site.ansible.include_device_roles, "Ansible device inventory (site #{@site.id})") do |role|
+          # log context is per fiber
+          set_log_context!
 
-              ansible_dump_devices(role: role.name, filename: role.filename)
-            end
-          end
+          ansible_dump_devices(role: role.name, filename: role.filename)
         end
 
-        WaitGroup.wait do |wg|
-          @site.ansible.include_vm_roles.each do |role|
-            wg.spawn do
-              # log context is per fiber
-              set_log_context!
+        NetboxExtractor::Concurrency.each_isolated(@site.ansible.include_vm_roles, "Ansible vm inventory (site #{@site.id})") do |role|
+          # log context is per fiber
+          set_log_context!
 
-              ansible_dump_vms(role: role.name, os: role.os, filename: role.filename)
-            end
-          end
+          ansible_dump_vms(role: role.name, os: role.os, filename: role.filename)
         end
       end
 

@@ -26,43 +26,58 @@ module NetboxExtractor
         Log.context.set site: @site.id
       end
 
+      # Build-then-swap: the whole zone is generated into a staging directory and
+      # only swapped over the live directory once every host has been written
+      # without error. A failure mid-generation (a load failure, a broken host)
+      # therefore leaves the existing Icinga config fully intact instead of wiping
+      # it up front (K3).
       private def generate_files
-        FileUtils.rm_rf @site.icinga_zones_path
+        final_path = @site.icinga_zones_path
+        staging_path = final_path.parent.join(".#{@site.id}.staging")
 
-        WaitGroup.wait do |wg|
-          @site.icinga.include_device_roles.each do |role|
-            wg.spawn do
-              # log context is per fiber
-              set_log_context!
+        FileUtils.rm_rf staging_path
+        FileUtils.mkdir_p staging_path
+        @site.icinga_staging_path = staging_path
 
-              icinga_dump_devices(role: role.name, filename: role.filename)
-            end
-          end
+        begin
+          generate_into_staging
+          swap_into_place(staging_path, final_path)
+        ensure
+          @site.icinga_staging_path = nil
+        end
+      end
+
+      private def generate_into_staging
+        NetboxExtractor::Concurrency.each_isolated(@site.icinga.include_device_roles, "Icinga device configs (site #{@site.id})") do |role|
+          # log context is per fiber
+          set_log_context!
+
+          icinga_dump_devices(role: role.name, filename: role.filename)
         end
 
-        WaitGroup.wait do |wg|
-          @site.icinga.include_vm_roles.each do |role|
-            wg.spawn do
-              # log context is per fiber
-              set_log_context!
+        NetboxExtractor::Concurrency.each_isolated(@site.icinga.include_vm_roles, "Icinga vm configs (site #{@site.id})") do |role|
+          # log context is per fiber
+          set_log_context!
 
-              icinga_dump_vms(role: role.name, os: role.os, filename: role.filename)
-            end
-          end
+          icinga_dump_vms(role: role.name, os: role.os, filename: role.filename)
         end
 
-        WaitGroup.wait do |wg|
-          @site.icinga.check_vhosts.each do |check_vhost|
-            wg.spawn do
-              # log context is per fiber
-              set_log_context!
+        NetboxExtractor::Concurrency.each_isolated(@site.icinga.check_vhosts, "Icinga vhost configs (site #{@site.id})") do |check_vhost|
+          # log context is per fiber
+          set_log_context!
 
-              icinga_dump_vhosts(check_vhost)
-            end
-          end
+          icinga_dump_vhosts(check_vhost)
         end
 
         icinga_dump_custom_hosts(@site.icinga.check_custom_hosts)
+      end
+
+      private def swap_into_place(staging_path, final_path)
+        FileUtils.rm_rf final_path
+        FileUtils.mkdir_p final_path.parent
+        File.rename(staging_path.to_s, final_path.to_s)
+
+        Log.info { "Swapped generated Icinga config into #{final_path}" }
       end
 
       private def icinga_dump_devices(role, filename = nil)

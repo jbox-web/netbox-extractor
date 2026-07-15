@@ -7,7 +7,7 @@ module NetboxExtractor
         class Mitogen
           include YAML::Serializable
 
-          property path : String
+          property path : String = ""
           property strategy : String = "mitogen_linear"
           property? enabled : Bool = false
         end
@@ -20,7 +20,7 @@ module NetboxExtractor
         property ssh_args : String? = nil
         property? deprecation_warnings : Bool = false
         property? host_key_checking : Bool = true
-        property mitogen : Mitogen
+        property mitogen : Mitogen = Mitogen.from_yaml("")
 
         def cache_path
           Path.new(File.expand_path(cache_dir))

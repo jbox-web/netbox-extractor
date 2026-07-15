@@ -35,6 +35,7 @@ module NetboxExtractor
     config_template = File.read(File.expand_path(config_path))
     config_file = NetboxExtractor::Utils.render_template(config_template, {"ENV" => ENV.to_h})
     self.config = Config::Base.from_yaml(config_file)
+    config.validate!
   end
 
   def self.config=(config : Config::Base)

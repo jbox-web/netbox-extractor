@@ -18,6 +18,22 @@ module NetboxExtractor
           end
         end
       end
+
+      # Fails fast on configurations that would make concurrent generation
+      # clobber output: sites sharing an id resolve to the same zones/inventory
+      # directory, and roles sharing a filename overwrite each other's file.
+      def validate!
+        validate_unique_site_ids!
+        sites.each(&.validate!)
+      end
+
+      private def validate_unique_site_ids!
+        ids = sites.map(&.id)
+        dupes = ids.select { |id| ids.count(id) > 1 }.uniq!
+        return if dupes.empty?
+
+        raise ValidationError.new("Duplicate site id(s): #{dupes.join(", ")}")
+      end
     end
   end
 end

@@ -5,16 +5,14 @@ module NetboxExtractor
 
       def self.generate_icinga_inventories(nbe_site)
         if nbe_site == "all"
-          WaitGroup.wait do |wg|
-            NetboxExtractor.config.sites.each do |site|
-              wg.spawn { generate_icinga_inventory(site) }
-            end
+          NetboxExtractor::Concurrency.each_isolated(NetboxExtractor.config.sites, "Icinga generation") do |site|
+            generate_icinga_inventory(site)
           end
         else
           if site = NetboxExtractor.config.sites.find { |s| s.id == nbe_site }
             generate_icinga_inventory(site)
           else
-            Log.error { "Unknown site: #{nbe_site}" }
+            raise "Unknown site: #{nbe_site}"
           end
         end
       end

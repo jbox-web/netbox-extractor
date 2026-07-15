@@ -96,8 +96,8 @@ sites:
             password: <password>
             instances:
               - name: <instance name>
-                version: <instance pg version>
-                port: <instance port>
+                version: 15
+                port: 5432
                 dbname: <db name>
 
           check_rabbit:
@@ -106,8 +106,8 @@ sites:
             node: <node name>
             queues:
               - name: <queue name>
-                warning: <queue warning>
-                critical: <queue critical>
+                warning: 100
+                critical: 200
 
           check_drac:
             exclude_checks:
