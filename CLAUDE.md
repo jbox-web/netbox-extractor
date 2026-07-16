@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Tool management uses [mise](https://mise.jdx.dev/). Crystal version: 1.18.2.
+Tool management uses [mise](https://mise.jdx.dev/). Crystal version: 1.20.3.
 
 ```sh
 mise run dev:deps      # Install dependencies (shards install)

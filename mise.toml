@@ -1,5 +1,5 @@
 [tools]
-crystal = "1.18.2"
+crystal = "1.20.3"
 java = "openjdk-25"
 python = "3.11.14"
 
