@@ -34,11 +34,13 @@ module NetboxExtractor
       getter defaults = Crinja::Variables.new
 
       # Returns the filter target rendered as an Icinga2 array literal, JSON-
-      # encoding each element so it is individually quoted and escaped.
+      # encoding each element so it is individually quoted and escaped. Elements
+      # are joined with ", " to match the historical spacing and avoid churn in
+      # already-generated files (the spacing is cosmetic; Icinga2 parses both).
       def call(arguments)
         target = arguments.target
         elements = target ? target.to_a : [] of Crinja::Value
-        elements.map(&.to_string).to_json
+        "[" + elements.map(&.to_string.to_json).join(", ") + "]"
       end
     end
   end

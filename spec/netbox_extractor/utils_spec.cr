@@ -14,10 +14,10 @@ Spectator.describe NetboxExtractor::Utils do
   end
 
   describe "the icinga_array filter" do
-    it "renders a JSON array literal with each element escaped" do
+    it "renders a JSON array literal with each element escaped, ', '-separated" do
       rendered = NetboxExtractor::Utils.render_template(%q({{ v | icinga_array }}), {"v" => ["a", %q(x"y)]})
 
-      expect(rendered).to eq(%q(["a","x\"y"]))
+      expect(rendered).to eq(%q(["a", "x\"y"]))
     end
   end
 end
