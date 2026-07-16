@@ -54,7 +54,8 @@ run = "bin/ameba"
 
 [tasks."dev:format"]
 description = "Format code"
-run = "crystal tool format"
+# Restrict to project code: the vendored client is formatted by netbox-api:format.
+run = "crystal tool format src spec"
 
 [tasks."dev:docker-image"]
 description = "Build local multiplatforms Docker image for local development"
