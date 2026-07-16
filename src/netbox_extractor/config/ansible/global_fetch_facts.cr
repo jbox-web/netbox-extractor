@@ -21,6 +21,9 @@ module NetboxExtractor
         property exclude_tags : Array(String) = [] of String
         # Maximum number of parallel Ansible forks used during fact gathering.
         property fork_limit : Int32 = 30
+        # Hard cap on concurrent `ansible-playbook` processes across the whole run
+        # (all sites, all inventories). `0` means unlimited — no capping.
+        property max_parallel_playbooks : Int32 = 0
         # Per-host SSH/connection timeout in seconds.
         property timeout : Int32 = 5
         # Ansible fact-cache validity duration in seconds.

@@ -33,5 +33,20 @@ Spectator.describe NetboxExtractor::Concurrency do
         NetboxExtractor::Concurrency.each_isolated([1, 2], "task") { |_n| }
       end.to_not raise_error
     end
+
+    it "does not raise on failures when fatal is false, but still runs the others" do
+      completed = [] of Int32
+      mutex = Mutex.new
+
+      expect do
+        NetboxExtractor::Concurrency.each_isolated([1, 2, 3], "task", fatal: false) do |n|
+          raise "boom" if n == 2
+          mutex.synchronize { completed << n }
+        end
+      end.to_not raise_error
+
+      # Best-effort: the failing item is logged and skipped, the rest complete.
+      expect(completed.sort).to eq([1, 3])
+    end
   end
 end

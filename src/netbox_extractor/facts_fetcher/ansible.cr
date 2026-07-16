@@ -2,19 +2,29 @@ module NetboxExtractor
   module FactsFetcher
     # Runs `ansible-playbook` per inventory to gather host facts into the shared
     # cache. Instantiated per site: it filters the existing inventory, writes
-    # temporary inventory/playbook/config files, and invokes the playbook under a
-    # global concurrency cap (`MAX_PARALLEL_PLAYBOOKS`), cleaning up temp files
-    # even on failure.
+    # temporary inventory/playbook/config files, and invokes the playbook under an
+    # optional global concurrency cap (`fetch_facts.max_parallel_playbooks`),
+    # cleaning up temp files even on failure.
     class Ansible
       Log = ::Log.for("netbox-extractor.ansible")
 
       SSH_ARGS = ""
 
-      # Hard cap on ansible-playbook processes running at once across the whole
-      # run (all sites, all inventories), so `--site all` cannot flood the host
-      # with one heavyweight process per inventory (K4).
-      MAX_PARALLEL_PLAYBOOKS = 4
-      PLAYBOOK_SLOTS         = Channel(Nil).new(MAX_PARALLEL_PLAYBOOKS)
+      # Single global semaphore shared across every site and inventory, built once
+      # from `fetch_facts.max_parallel_playbooks`. `nil` when the cap is `0`
+      # (unlimited): in that case `call_ansible` runs without any bridge.
+      @@slots : Channel(Nil)? = nil
+      @@slots_mutex = Mutex.new
+
+      # Lazily builds (once) the global playbook semaphore from config, or returns
+      # `nil` when the configured cap is `0`/negative (unlimited). Guarded by a
+      # `Mutex` so racing fibers share a single channel.
+      def self.playbook_slots
+        max = NetboxExtractor.config.ansible.fetch_facts.max_parallel_playbooks
+        return nil if max <= 0
+
+        @@slots_mutex.synchronize { @@slots ||= Channel(Nil).new(max) }
+      end
 
       # Builds a fetcher for `site` and runs it, gathering facts for all of the
       # site's configured inventories.
@@ -67,7 +77,10 @@ module NetboxExtractor
       # fan-out (K2), so `run` must not wipe it here — that would erase sibling
       # sites' freshly-written cache.
       def run
-        NetboxExtractor::Concurrency.each_isolated(@site.ansible.fetch_facts.inventories, "Ansible facts (site #{@site.id})") do |inventory_file|
+        # Fact gathering is best-effort: unreachable hosts (ansible-playbook exit
+        # 4) are routine on a real fleet, so a per-inventory failure is logged and
+        # skipped (fatal: false) rather than aborting the whole run.
+        NetboxExtractor::Concurrency.each_isolated(@site.ansible.fetch_facts.inventories, "Ansible facts (site #{@site.id})", fatal: false) do |inventory_file|
           # log context is per fiber
           set_log_context!
           fetch_facts(inventory_file)
@@ -129,7 +142,8 @@ module NetboxExtractor
 
         Log.debug { "Running command: ansible-playbook #{args} | #{env}" }
 
-        PLAYBOOK_SLOTS.send(nil)
+        slots = Ansible.playbook_slots
+        slots.try &.send(nil)
 
         begin
           status = Process.run("ansible-playbook",
@@ -142,7 +156,7 @@ module NetboxExtractor
 
           raise "ansible-playbook exited with status #{status.exit_code}" unless status.success?
         ensure
-          PLAYBOOK_SLOTS.receive
+          slots.try &.receive
           # Never leak the generated temp files, even on failure (G1).
           generated.each { |path| File.delete?(path) }
         end
