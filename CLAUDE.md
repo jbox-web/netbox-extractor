@@ -34,7 +34,7 @@ crystal spec spec/path/to/file_spec.cr
 
 ### Key layers
 
-**Controllers** (`src/netbox_extractor/controllers/`) — orchestrate work per site. Accept a `site` flag ("all" runs all sites in parallel via `WaitGroup`).
+**Controllers** (`src/netbox_extractor/controllers/`) — orchestrate work per site. Accept a `site` flag ("all" runs all sites in parallel via `Concurrency.each_isolated`).
 
 **Generators** (`src/netbox_extractor/generators/`) — load inventories from Netbox, transform via Presenters, write output files.
 

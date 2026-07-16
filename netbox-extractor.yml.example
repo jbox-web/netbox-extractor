@@ -19,6 +19,7 @@ ansible:
   fetch_facts:
     timeout: 5
     fork_limit: 30
+    max_parallel_playbooks: 0   # cap on concurrent ansible-playbook processes (0 = unlimited)
     ssh_args: "-o ControlMaster=auto -o ControlPersist=600s"
     exclude_tags:
       - check-only-ping
