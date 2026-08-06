@@ -14,7 +14,20 @@ A Crystal CLI that extracts data from [Netbox](https://github.com/netbox-communi
 
 Get binary from [releases page](https://github.com/jbox-web/netbox-extractor/releases).
 
-If you use [mise](https://mise.jdx.dev/) you can also install netbox-extractor with [asdf-netbox-extractor](https://github.com/jbox-web/asdf-netbox-extractor).
+If you use [mise](https://mise.jdx.dev/), install it from the
+[jbox-web aqua registry](https://github.com/jbox-web/aqua-registry):
+
+```toml
+# mise.toml
+[settings]
+aqua.registries = ["https://github.com/jbox-web/aqua-registry"]
+
+[tools]
+"aqua:jbox-web/netbox-extractor" = "2.0.0"
+```
+
+The registry has to be declared: the tool is not in the default aqua registry,
+and without that setting the name resolves to nothing.
 
 ## Usage
 
@@ -145,13 +158,19 @@ loadable example.
 Tooling is managed with [mise](https://mise.jdx.dev/).
 
 ```sh
-mise run dev:deps     # Install dependencies (shards install)
-mise run dev:build    # Compile bin/netbox-extractor
-mise run dev:spec     # Run tests
-mise run dev:ameba    # Static analysis (ameba)
-mise run dev:format   # Format code
+mise run dev:deps          # Install dependencies (shards install)
+mise run dev:build         # Compile bin/netbox-extractor
+mise run dev:spec          # Run tests
+mise run dev:spec-mt       # Run tests multi-threaded
+mise run dev:ameba         # Static analysis (ameba)
+mise run dev:format        # Format code
+mise run dev:format-check  # Check formatting without writing
+mise run dev:docs          # Build API docs
 bin/netbox-extractor
 ```
+
+CI runs `dev:format-check`, `dev:ameba`, `dev:docs`, `dev:spec` and
+`dev:spec-mt`, so all five should pass before pushing.
 
 ## Contributing
 
