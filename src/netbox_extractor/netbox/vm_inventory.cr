@@ -35,6 +35,12 @@ module NetboxExtractor
         @vms.compact_map(&.name)
       end
 
+      # Role slugs carried by the loaded VMs. Used to report a configured role
+      # that no object carries.
+      def object_roles
+        @vms.compact_map(&.netbox_role)
+      end
+
       define_netbox_load name: :vms,
         klass: NetboxClient::VirtualMachineWithConfigContext,
         method: "fetch_virtualization_virtual_machines_list",

@@ -21,6 +21,14 @@ module NetboxExtractor
       @[YAML::Field(ignore: true)]
       property icinga_staging_path : Path? = nil
 
+      # File this site was read from, as written on the command line or in
+      # `sites_config:` — not expanded, so what is reported back is what the
+      # operator would open. A site id alone does not say which of several
+      # files to edit. Nil when the config was built without going through
+      # `load_config`, as specs do.
+      @[YAML::Field(ignore: true)]
+      property source_path : String? = nil
+
       # A role `filename` is concatenated into an output path, so it has to be a
       # single safe path segment — the same guarantee the Netbox host names get
       # from `InventoryFilters::SAFE_NAME`.

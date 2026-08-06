@@ -28,6 +28,7 @@ netbox-extractor <subcommand> <action> [flags...]
 | `ansible fetch_facts`  | Gather Ansible facts into the shared cache     |
 | `icinga generate`      | Generate Icinga2 configuration files           |
 | `bind generate`        | Generate Bind DNS zone data                    |
+| `config check`         | Check the configuration without generating     |
 | `test_api get`         | Check connectivity to the Netbox API           |
 
 Common flags:
@@ -36,7 +37,7 @@ Common flags:
 |-------------------|------------------------|--------------------------------------------------------|
 | `--config`, `-c`  | `netbox-extractor.yml` | Path to the config file                                |
 | `--env`, `-e`     | `.env`                 | Path to the env file                                   |
-| `--site`, `-s`    | `all`                  | Site id to process (`all` = every site); `ansible` and `icinga` only |
+| `--site`, `-s`    | `all`                  | Site id to process (`all` = every site); `ansible`, `icinga` and `config check` only |
 
 Examples:
 
@@ -47,6 +48,40 @@ netbox-extractor icinga generate
 
 # Restrict to one site, with an explicit config path
 netbox-extractor icinga generate --site dc1 --config /etc/netbox-extractor.yml
+```
+
+### Checking the configuration
+
+`config check` reports what a generation run would quietly ignore, and writes
+nothing:
+
+```sh
+# Validate the file itself: schema, duplicate site ids, colliding or unsafe
+# role filenames. Instant, no network, no token needed.
+netbox-extractor config check
+
+# Also match every configured name against what Netbox holds: checks_config
+# entries, include_objects/exclude_objects and roles that designate no object.
+netbox-extractor config check --with-netbox
+```
+
+`--with-netbox` loads each site's inventories, so it costs as many API calls as
+a generation run — which is why it is not the default.
+
+Exit status:
+
+| Situation                                            | Status |
+|------------------------------------------------------|--------|
+| Nothing to report                                     | `0`    |
+| Warnings only (a name that designates nothing)        | `0`    |
+| Warnings only, with `--strict`                        | `1`    |
+| Errors (unreadable file, invalid config, Netbox down) | `1`    |
+
+Warnings are things to clean up rather than breakage, so they do not fail a
+pipeline unless `--strict` says they should:
+
+```sh
+netbox-extractor config check --with-netbox --strict
 ```
 
 ## Configuration

@@ -22,8 +22,19 @@ module NetboxExtractor
           file = File.expand_path(config_file)
           raise ValidationError.new("sites_config file not found: #{config_file}") unless File.exists?(file)
 
-          @sites << Site.from_yaml(File.read(file))
+          site = Site.from_yaml(File.read(file))
+          # The path as written, not the expanded one: it is meant to be read
+          # back by whoever has to edit the file.
+          site.source_path = config_file
+          @sites << site
         end
+      end
+
+      # Attributes the sites declared inline to the file they were read from.
+      # Sites pulled in from `sites_config:` already know their own file, so
+      # they are left alone.
+      def source_path=(path : String)
+        @sites.each { |site| site.source_path ||= path }
       end
 
       # Fails fast on configurations that would make concurrent generation

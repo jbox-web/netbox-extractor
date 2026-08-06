@@ -35,6 +35,12 @@ module NetboxExtractor
         @devices.compact_map(&.name)
       end
 
+      # Role slugs carried by the loaded devices. Used to report a configured
+      # role that no object carries.
+      def object_roles
+        @devices.compact_map(&.netbox_role)
+      end
+
       define_netbox_load name: :devices,
         klass: NetboxClient::DeviceWithConfigContext,
         method: "fetch_dcim_devices_list",

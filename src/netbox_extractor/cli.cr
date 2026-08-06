@@ -188,6 +188,59 @@ module NetboxExtractor
       end
     end
 
+    # Parent command grouping the configuration subcommands.
+    class Config < Admiral::Command
+      define_help description: "Configuration subcommands"
+      include ParentCommand
+
+      # Reports what is wrong with the configuration without writing anything:
+      # what `validate!` rejects, and — with `--with-netbox` — every configured
+      # name that designates no object, which a generation run would otherwise
+      # skip past.
+      class Check < Admiral::Command
+        define_help description: "Check the configuration"
+
+        define_flag config : String,
+          description: "Path to config file",
+          long: "config",
+          short: "c",
+          default: "netbox-extractor.yml"
+
+        define_flag env : String,
+          description: "Path to env file",
+          long: "env",
+          short: "e",
+          default: ".env"
+
+        define_flag site : String,
+          description: "Site",
+          long: "site",
+          short: "s",
+          default: "all"
+
+        define_flag with_netbox : Bool,
+          description: "Match configured names against Netbox (costs as many API calls as a generation run)",
+          long: "with-netbox",
+          default: false
+
+        define_flag strict : Bool,
+          description: "Exit non-zero on warnings too, not only on errors",
+          long: "strict",
+          default: false
+
+        def run
+          status = NetboxExtractor::Controllers::Config.check(flags.config, flags.env, flags.site, flags.with_netbox, flags.strict)
+          exit status
+        end
+      end
+
+      register_sub_command check, Check, description: "Check the configuration"
+
+      def run
+        run_parent
+      end
+    end
+
     # Parent command grouping the Netbox API connectivity-test subcommands.
     class TestApi < Admiral::Command
       define_help description: "Netbox/Test subcommands"
@@ -240,6 +293,7 @@ module NetboxExtractor
     register_sub_command ansible, Ansible, description: "Netbox/Ansible subcommands"
     register_sub_command icinga, Icinga, description: "Netbox/Icinga subcommands"
     register_sub_command bind, Bind, description: "Netbox/Bind subcommands"
+    register_sub_command config, Config, description: "Configuration subcommands"
     register_sub_command test_api, TestApi, description: "Netbox/Test subcommands"
 
     def run

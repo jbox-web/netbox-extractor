@@ -38,17 +38,8 @@ module NetboxExtractor
       private def warn_orphan_checks_config
         names = @device_inventory.object_names + @vm_inventory.object_names
 
-        Icinga.orphan_checks_config(@site.icinga.checks_config, names).each do |config|
+        NetboxExtractor::ConfigCheck::Checker.orphan_checks_config(@site.icinga.checks_config, names).each do |config|
           Log.warn { "checks_config entry '#{config.host}' matches no host of this site" }
-        end
-      end
-
-      # Entries of `checks_config` designating none of `names`, under the same
-      # matching rule the presenters apply. Kept free of logging and state so the
-      # selection itself can be exercised without a Netbox client.
-      def self.orphan_checks_config(checks_config, names)
-        checks_config.reject do |config|
-          names.any? { |name| NetboxExtractor::Presenters::WithCustomConfig.matches_host?(config.host, name) }
         end
       end
 
