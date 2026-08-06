@@ -1,5 +1,9 @@
+[settings]
+aqua.registries = ["https://github.com/jbox-web/aqua-registry"]
+
 [tools]
 crystal = "1.20.3"
+"aqua:elbywan/crystalline" = "0.18.0"
 java = "openjdk-25"
 python = "3.11.14"
 
@@ -44,18 +48,36 @@ run = "rm -rf bin/* lib/"
 description = "Run Crystal spec"
 run = "crystal spec {{vars.SPEC_OPTS}}"
 
-[tasks."dev:doc"]
+[tasks."dev:spec-mt"]
+description = "Run Crystal spec (multi-threaded)"
+env = { CRYSTAL_WORKERS = "4" }
+run = "crystal spec {{vars.SPEC_OPTS}} -Dpreview_mt"
+
+[tasks."dev:docs"]
 description = "Generate project documentation"
 run = "rm -rf docs && crystal doc"
 
+# ameba can spin at 100% CPU indefinitely on some inputs, so the task carries its
+# own bound: the analysis is killed after 180s and the task fails with exit 124
+# instead of running for hours unnoticed. Never call `bin/ameba` directly.
+# `timeout` is GNU coreutils: present on the CI Linux runners, absent from macOS
+# — /usr/bin/timeout does not exist there. Both CI templates install coreutils
+# and put its gnubin first in the macOS jobs, so the task needs no platform
+# branch; a macOS machine running it by hand needs `brew install coreutils` and
+# that prefix on its PATH.
 [tasks."dev:ameba"]
 description = "Run static code analysis"
-run = "bin/ameba"
+run = "timeout 180 bin/ameba"
 
 [tasks."dev:format"]
 description = "Format code"
 # Restrict to project code: the vendored client is formatted by netbox-api:format.
 run = "crystal tool format src spec"
+
+[tasks."dev:format-check"]
+description = "Check code formatting"
+# Same restriction as dev:format: the vendored client is not ours to format.
+run = "crystal tool format --check src spec"
 
 [tasks."dev:docker-image"]
 description = "Build local multiplatforms Docker image for local development"
