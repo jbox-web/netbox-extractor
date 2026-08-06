@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `config check`: reports what a generation run would quietly ignore, and
+  writes nothing. Validates the file itself with no network access; with
+  `--with-netbox`, also matches every configured name against what Netbox
+  holds — `checks_config` entries, `include_objects`/`exclude_objects` and
+  roles designating no object, objects carrying no platform, and platform
+  slugs the OS detection cannot classify unambiguously. Findings name the file
+  to edit. Warnings exit `0` unless `--strict` is given; errors always exit
+  `1`.
+- `config dump`: prints the effective configuration — template rendered,
+  `sites_config:` files merged, defaults applied — as valid YAML. Secrets
+  (`api_token` and every `password`) are redacted, with no flag to reveal
+  them.
+- The `filename` key of an Icinga role now works: it sets the output
+  subdirectory, as the example config had always implied. A role filename that
+  is not a safe path segment is refused at validation.
 - `ansible.fetch_facts.max_parallel_playbooks` config option: a hard cap on the
   number of concurrent `ansible-playbook` processes across the whole run
   (`0` = unlimited).
@@ -19,6 +34,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Generation now reports what it drops instead of dropping it silently: an
+  object with no status or no platform, a `checks_config` entry matching no
+  host, a malformed facts file. Each used to remove a host from the output
+  without a word.
+- `checks_config` entries are matched case-insensitively and across the
+  FQDN/short-name boundary, so an entry keyed `web1.example.com` now applies to
+  the Netbox host `web1` instead of falling through to the default checks.
+- An unknown subcommand (`ansible genrate`) exits `1` with a message instead of
+  printing the help and exiting `0`, which made a total no-op look like a
+  success in cron and CI.
+- A missing `.env` no longer aborts a run whose secrets are already exported,
+  as in a container or CI job.
+- Relative `sites_config:` paths resolve next to the config file that declares
+  them, falling back to the working directory.
+- The Icinga zone swap no longer leaves a window in which the site has no
+  configuration at all.
+- Per-host check lookups are memoised: 98.58µs → 8.42µs per host on 100
+  `checks_config` entries, with allocations down from 149kB to 12.6kB.
+- The library and the program are now separate files: requiring
+  `src/netbox_extractor.cr` starts nothing, and `src/netbox-extractor.cr` only
+  runs the CLI. The entry point keeps its name and path.
 - Fact gathering is now best-effort: an unreachable host or failed inventory is
   logged as a one-line warning and skipped, instead of aborting the whole run
   with a stack trace.
@@ -31,6 +67,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- An untagged Netbox object keeps its role tag, and the SNMP/ping predicates
+  answer `false` instead of `nil`: Netbox returns a null tag list rather than an
+  empty one, and that nil used to be threaded through.
+- A facts file that is valid JSON but not an object no longer kills the host's
+  fiber and aborts the site's config swap.
+- A closed reader (`… | head`) exits `0` instead of answering with a stack
+  trace: Crystal ignores SIGPIPE, so the resulting `EPIPE` reached the
+  catch-all handler.
+- A load failure is no longer reported twice — the stack trace no longer prints
+  underneath a message that already explained it.
+- The fatal-error handler is no longer gated on `CRYSTAL_ENV`, which nothing
+  set, so it was dead code exactly where it was meant to run.
+- Errors keep their cause: config template and log file failures no longer
+  discard the original exception and its backtrace.
+- Warnings raised from included modules now carry their own log source instead
+  of landing on the root logger, where no per-source level could reach them.
 - Restored `", "` spacing in `icinga_array` output to avoid churn in already
   generated Icinga config.
 - A transient Netbox failure no longer wipes already-generated output.
@@ -42,9 +94,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- `test_api get` no longer dumps the users, permissions and tokens endpoints at
+  debug level, which wrote Netbox API tokens to the log file in clear text.
+  Only their count is logged.
 - Escape Netbox-sourced values interpolated into the Icinga2 DSL (both strings
   and arrays): a value containing a quote or backslash can no longer break the
-  zone or inject configuration.
+  zone or inject configuration. `$` is now escaped too — Icinga2 reads `$name$`
+  inside a double-quoted string as a runtime macro, so a vendor name or an LSB
+  fact containing one could break the zone or resolve to something else.
 
 ### Removed
 
