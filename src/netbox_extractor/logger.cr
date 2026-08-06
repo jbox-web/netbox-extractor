@@ -50,7 +50,10 @@ module NetboxExtractor
 
       File.open(config.logger.log_file, "a")
     rescue ex : IO::Error
-      raise "Cannot open log_file '#{config.logger.log_file}': #{ex.message}"
+      # `cause:` rather than a bare String: raising a String discards the
+      # original exception and its backtrace, leaving only the summary message
+      # to diagnose a permission or path problem.
+      raise RuntimeError.new("Cannot open log_file '#{config.logger.log_file}': #{ex.message}", cause: ex)
     end
 
     private def log_to_stdout?
