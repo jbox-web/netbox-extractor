@@ -61,10 +61,25 @@ nothing:
 # role filenames. Instant, no network, no token needed.
 netbox-extractor config check
 
-# Also match every configured name against what Netbox holds: checks_config
-# entries, include_objects/exclude_objects and roles that designate no object.
+# Also match everything the config says against what Netbox holds: checks_config
+# entries, include_objects/exclude_objects and roles designating no object,
+# objects carrying no platform, and platform slugs the OS detection cannot
+# classify unambiguously.
 netbox-extractor config check --with-netbox
 ```
+
+An `include_objects`/`exclude_objects` entry that matches no host is reported
+with the near miss when there is one, because the two cases call for opposite
+fixes — these filters match exactly, so an entry differing only in case or by a
+domain is not dead config, it is a filter that silently does nothing:
+
+```
+WARNING  [dc1] exclude_objects entry 'W2022' matches no host of this site, but 'w2022' does
+         — the exclusion is not being applied, as these filters match exactly (config/dc1.yml)
+WARNING  [dc1] exclude_objects entry 'mattermost' matches no host of this site (config/dc1.yml)
+```
+
+The first has to be corrected, the second deleted.
 
 `--with-netbox` loads each site's inventories, so it costs as many API calls as
 a generation run — which is why it is not the default.

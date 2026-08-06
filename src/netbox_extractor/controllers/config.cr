@@ -114,8 +114,12 @@ module NetboxExtractor
 
         names = devices.object_names + vms.object_names
         roles = (devices.object_roles + vms.object_roles).uniq!
+        platforms = (devices.object_platforms + vms.object_platforms).uniq!
 
-        ConfigCheck::Checker.check_site(site, names, roles)
+        ConfigCheck::Checker.check_site(site, names, roles,
+          platforms: platforms,
+          vms_without_platform: vms.objects_without_platform,
+          devices_without_platform: devices.objects_without_platform)
       end
 
       # `"all"` selects every configured site, as it does everywhere else.

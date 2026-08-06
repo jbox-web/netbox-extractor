@@ -35,7 +35,12 @@ module NetboxExtractor
       # `roles` is the set of role slugs the loaded objects carry. It is nil
       # when the caller did not collect them, and the role checks are then
       # skipped rather than reporting every configured role as unmatched.
-      def check_site(site, names, roles : Array(String)? = nil) : Array(Finding)
+      def check_site(site,
+                     names,
+                     roles : Array(String)? = nil,
+                     platforms : Array(String)? = nil,
+                     vms_without_platform : Array(String)? = nil,
+                     devices_without_platform : Array(String)? = nil) : Array(Finding)
         findings = [] of Finding
 
         orphan_checks_config(site.icinga.checks_config, names).each do |config|
@@ -47,16 +52,38 @@ module NetboxExtractor
         # useless: an include list naming only absent hosts filters every host
         # out and empties the inventory.
         site.include_objects.each do |name|
-          findings << warning(site, "include_objects entry '#{name}' matches no host of this site") unless names.includes?(name)
+          findings << warning(site, filter_entry_message("include_objects", name, names, "inclusion")) unless names.includes?(name)
         end
 
         site.exclude_objects.each do |name|
-          findings << warning(site, "exclude_objects entry '#{name}' matches no host of this site") unless names.includes?(name)
+          findings << warning(site, filter_entry_message("exclude_objects", name, names, "exclusion")) unless names.includes?(name)
         end
 
         findings.concat(check_roles(site, roles)) if roles
+        findings.concat(check_platforms(site, platforms)) if platforms
+
+        vms_without_platform.try &.each do |name|
+          findings << warning(site, "VM '#{name}' has no platform in Netbox: it matches no OS family, so it is absent from every inventory and every Icinga config")
+        end
+
+        devices_without_platform.try &.each do |name|
+          findings << warning(site, "device '#{name}' has no platform in Netbox: it is generated with an OS of 'unknown'")
+        end
 
         findings
+      end
+
+      # OS detection is a substring test, and linux is tried before windows, so
+      # a slug carrying markers of both is classed linux without windows ever
+      # being evaluated. Reported under the rule that classifies it, so the two
+      # cannot drift apart.
+      private def check_platforms(site, platforms) : Array(Finding)
+        platforms.uniq.compact_map do |slug|
+          next unless NetboxExtractor::Patches::NetboxClient.linux_slug?(slug) &&
+                      NetboxExtractor::Patches::NetboxClient.windows_slug?(slug)
+
+          warning(site, "platform slug '#{slug}' carries markers of both OS families and is classed linux, linux being tested first")
+        end
       end
 
       # A configured role no loaded object carries generates nothing at all —
@@ -73,6 +100,21 @@ module NetboxExtractor
           names.reject { |name| roles.includes?(name) }
             .map { |name| warning(site, "#{kind} '#{name}' matches no object of this site") }
         end
+      end
+
+      # Tells a dead entry apart from a broken one. Both fail the strict
+      # equality the filters use, but they call for opposite fixes: an entry
+      # naming a host that no longer exists should be deleted, while one that
+      # differs from a real host only in case or by a domain should be
+      # corrected — deleting it would entrench the very behaviour it was meant
+      # to prevent, since the filter is silently not being applied.
+      private def filter_entry_message(key, name, names, effect)
+        base = "#{key} entry '#{name}' matches no host of this site"
+        near = names.find { |candidate| NetboxExtractor::Presenters::WithCustomConfig.matches_host?(name, candidate) }
+
+        return base if near.nil?
+
+        "#{base}, but '#{near}' does — the #{effect} is not being applied, as these filters match exactly"
       end
 
       private def warning(site, message)

@@ -41,6 +41,18 @@ module NetboxExtractor
         @vms.compact_map(&.netbox_role)
       end
 
+      # Platform slugs carried by the loaded VMs, for reporting slugs the OS
+      # detection cannot classify unambiguously.
+      def object_platforms
+        @vms.select(&.netbox_platform_known?).map(&.netbox_os_name)
+      end
+
+      # Names of loaded VMs Netbox holds no platform for. These match no OS
+      # family, so they are absent from every output.
+      def objects_without_platform
+        @vms.reject(&.netbox_platform_known?).compact_map(&.name)
+      end
+
       define_netbox_load name: :vms,
         klass: NetboxClient::VirtualMachineWithConfigContext,
         method: "fetch_virtualization_virtual_machines_list",

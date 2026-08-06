@@ -41,6 +41,17 @@ module NetboxExtractor
         @devices.compact_map(&.netbox_role)
       end
 
+      # Platform slugs carried by the loaded devices, for reporting slugs the OS
+      # detection cannot classify unambiguously.
+      def object_platforms
+        @devices.select(&.netbox_platform_known?).map(&.netbox_os_name)
+      end
+
+      # Names of loaded devices Netbox holds no platform for.
+      def objects_without_platform
+        @devices.reject(&.netbox_platform_known?).compact_map(&.name)
+      end
+
       define_netbox_load name: :devices,
         klass: NetboxClient::DeviceWithConfigContext,
         method: "fetch_dcim_devices_list",

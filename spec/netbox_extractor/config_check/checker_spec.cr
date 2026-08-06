@@ -77,12 +77,89 @@ Spectator.describe NetboxExtractor::ConfigCheck::Checker do
       expect(findings.any?(&.message.includes?("typo-host"))).to be_true
     end
 
+    # An orphan exclude_objects entry is not always dead config. The filter
+    # compares by strict equality, so an entry differing from a real host only
+    # in case, or by a domain, silently fails to exclude it: the host is
+    # monitored while the config says it should not be. Deleting the entry would
+    # entrench the opposite of the intent, so the report has to tell the two
+    # cases apart.
+    it "names the near match when an exclude entry differs only in case" do
+      site.exclude_objects = ["W2022"]
+
+      findings = NetboxExtractor::ConfigCheck::Checker.check_site(site, ["w2022"])
+      message = findings.map(&.message).find(&.includes?("W2022"))
+
+      expect(message).to_not be_nil
+      expect(message.to_s).to contain("w2022")
+      expect(message.to_s).to contain("not being applied")
+    end
+
+    it "names the near match across the FQDN boundary" do
+      site.include_objects = ["web1.example.com"]
+
+      findings = NetboxExtractor::ConfigCheck::Checker.check_site(site, ["web1"])
+      message = findings.map(&.message).find(&.includes?("web1.example.com"))
+
+      expect(message.to_s).to contain("web1")
+      expect(message.to_s).to contain("not being applied")
+    end
+
+    it "says plainly that nothing resembles the entry when nothing does" do
+      site.exclude_objects = ["long-gone"]
+
+      findings = NetboxExtractor::ConfigCheck::Checker.check_site(site, ["web1"])
+      message = findings.map(&.message).find(&.includes?("long-gone"))
+
+      expect(message.to_s).to contain("matches no host")
+      expect(message.to_s).to_not contain("not being applied")
+    end
+
     it "reports an exclude_objects entry designating no host" do
       site.exclude_objects = ["already-decommissioned"]
 
       findings = NetboxExtractor::ConfigCheck::Checker.check_site(site, ["web1"])
 
       expect(findings.any?(&.message.includes?("already-decommissioned"))).to be_true
+    end
+
+    # OS detection is a substring test with linux tried first, so a slug
+    # carrying markers of both families is classed linux without windows ever
+    # being evaluated. Whether that matters depends on the slugs a given Netbox
+    # actually holds — which nothing exposed until now.
+    it "reports a platform slug that carries markers of both OS families" do
+      findings = NetboxExtractor::ConfigCheck::Checker.check_site(site, ["web1"], platforms: ["windows-subsystem-linux"])
+
+      message = findings.map(&.message).find(&.includes?("windows-subsystem-linux"))
+      expect(message.to_s).to contain("both")
+      expect(message.to_s).to contain("linux")
+    end
+
+    it "says nothing about unambiguous slugs" do
+      findings = NetboxExtractor::ConfigCheck::Checker.check_site(site, ["web1"], platforms: ["debian-12", "microsoft-windows-2022", "vmware-esxi"])
+
+      expect(findings.map(&.message).any?(&.includes?("both"))).to be_false
+    end
+
+    # A VM with no platform matches no OS family and vanishes from every
+    # output; a device still gets generated, but with an OS of "unknown".
+    it "reports a VM with no platform as absent from every output" do
+      findings = NetboxExtractor::ConfigCheck::Checker.check_site(site, ["web1"], vms_without_platform: ["vm-no-platform"])
+
+      message = findings.map(&.message).find(&.includes?("vm-no-platform"))
+      expect(message.to_s).to contain("no platform")
+    end
+
+    it "reports a device with no platform as generated with an unknown OS" do
+      findings = NetboxExtractor::ConfigCheck::Checker.check_site(site, ["web1"], devices_without_platform: ["dev-no-platform"])
+
+      message = findings.map(&.message).find(&.includes?("dev-no-platform"))
+      expect(message.to_s).to contain("unknown")
+    end
+
+    it "says nothing about platforms when Netbox was not queried for them" do
+      findings = NetboxExtractor::ConfigCheck::Checker.check_site(site, ["web1"])
+
+      expect(findings.map(&.message).any?(&.includes?("platform"))).to be_false
     end
 
     it "carries the site id on every finding" do

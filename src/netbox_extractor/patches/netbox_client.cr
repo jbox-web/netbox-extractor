@@ -5,7 +5,10 @@ module NetboxExtractor
     # behavior (physical vs. virtual, SNMP forcing) lives in `netbox_device.cr`
     # and `netbox_vm.cr`.
     module NetboxClient
-      # Role slug of the object, or `nil` when it has no assigned role.
+      # Role slug of the object. The nilability is asymmetric and the type says
+      # so per receiver: a device's role is non-nullable in Netbox, so this
+      # returns a `String` there and nil-handling on a device is dead code; a
+      # VM's role is optional, so it returns `String?`.
       def netbox_role
         role.try &.slug
       end
@@ -55,15 +58,33 @@ module NetboxExtractor
         platform.try &.slug || "unknown"
       end
 
+      # Substrings that classify a platform slug. Exposed rather than inlined so
+      # the config checker can flag a slug carrying markers of both families
+      # under the very rule that classifies it — duplicating the list would let
+      # the two drift apart.
+      LINUX_MARKERS   = %w[linux debian ubuntu vmkernel vmware]
+      WINDOWS_MARKERS = %w[microsoft-windows windows]
+
+      # True when the slug indicates a Linux-family OS (including Debian/Ubuntu
+      # and VMware ESXi/vmkernel).
+      def self.linux_slug?(slug)
+        LINUX_MARKERS.any? { |marker| slug.includes?(marker) }
+      end
+
+      # True when the slug indicates a Windows OS.
+      def self.windows_slug?(slug)
+        WINDOWS_MARKERS.any? { |marker| slug.includes?(marker) }
+      end
+
       # True when the platform slug indicates a Linux-family OS (including
       # Debian/Ubuntu and VMware ESXi/vmkernel).
       def netbox_linux?
-        netbox_os_name.includes?("linux") || netbox_os_name.includes?("debian") || netbox_os_name.includes?("ubuntu") || netbox_os_name.includes?("vmkernel") || netbox_os_name.includes?("vmware")
+        NetboxClient.linux_slug?(netbox_os_name)
       end
 
       # True when the platform slug indicates a Windows OS.
       def netbox_windows?
-        netbox_os_name.includes?("microsoft-windows") || netbox_os_name.includes?("windows")
+        NetboxClient.windows_slug?(netbox_os_name)
       end
 
       # Dispatches an OS-family check by name: `"linux"` or `"windows"`; any other
