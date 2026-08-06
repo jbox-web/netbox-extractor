@@ -29,6 +29,12 @@ module NetboxExtractor
         filter_objects @devices.select(&.netbox_has_role?(role))
       end
 
+      # Names of every loaded device, unfiltered. Used to report config entries
+      # that designate a host the site does not have.
+      def object_names
+        @devices.compact_map(&.name)
+      end
+
       define_netbox_load name: :devices,
         klass: NetboxClient::DeviceWithConfigContext,
         method: "fetch_dcim_devices_list",

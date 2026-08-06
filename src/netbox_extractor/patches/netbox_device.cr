@@ -32,8 +32,9 @@ class NetboxClient::DeviceWithConfigContext
     device_type.try &.model
   end
 
-  # Relative Icinga config file path for this device: `<role>/<name>.conf`.
-  def netbox_icinga_filename
-    File.join(netbox_role, "#{name}.conf")
+  # Default Icinga output subdirectory for a device: its role slug. Overridden
+  # by the role's `filename` when the config sets one.
+  def netbox_icinga_subdir
+    netbox_role
   end
 end

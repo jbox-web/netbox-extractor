@@ -25,5 +25,18 @@ Spectator.describe NetboxExtractor::Config::Base do
 
       expect { config.validate! }.to raise_error(NetboxExtractor::Config::ValidationError)
     end
+
+    # An Icinga role's `filename` now names the output subdirectory, so it is
+    # concatenated into a path. A traversal segment there would write outside
+    # the site's zone directory, which the host-name filter already prevents for
+    # Netbox-sourced names.
+    it "rejects an Icinga role filename that would escape the zone directory" do
+      path = File.expand_path("../../../netbox-extractor.yml.example", __DIR__)
+      config = NetboxExtractor::Config::Base.from_yaml(File.read(path))
+      role = NetboxExtractor::Config::Icinga::SiteDeviceRole.from_yaml("name: evil\nfilename: ../../etc")
+      config.sites.first.icinga.include_device_roles << role
+
+      expect { config.validate! }.to raise_error(NetboxExtractor::Config::ValidationError)
+    end
   end
 end

@@ -27,7 +27,29 @@ module NetboxExtractor
       def run
         @device_inventory.load!
         @vm_inventory.load!
+        warn_orphan_checks_config
         generate_files
+      end
+
+      # A checks_config entry that designates no loaded host produces nothing at
+      # all: the host it meant to tune is rendered with default checks, or is
+      # absent entirely. Reported once per run, after both inventories are
+      # loaded, under the same matching rule the presenters use.
+      private def warn_orphan_checks_config
+        names = @device_inventory.object_names + @vm_inventory.object_names
+
+        Icinga.orphan_checks_config(@site.icinga.checks_config, names).each do |config|
+          Log.warn { "checks_config entry '#{config.host}' matches no host of this site" }
+        end
+      end
+
+      # Entries of `checks_config` designating none of `names`, under the same
+      # matching rule the presenters apply. Kept free of logging and state so the
+      # selection itself can be exercised without a Netbox client.
+      def self.orphan_checks_config(checks_config, names)
+        checks_config.reject do |config|
+          names.any? { |name| NetboxExtractor::Presenters::WithCustomConfig.matches_host?(config.host, name) }
+        end
       end
 
       private def set_log_context!
@@ -60,14 +82,14 @@ module NetboxExtractor
           # log context is per fiber
           set_log_context!
 
-          icinga_dump_devices(role: role.name)
+          icinga_dump_devices(role: role.name, subdir: role.filename)
         end
 
         NetboxExtractor::Concurrency.each_isolated(@site.icinga.include_vm_roles, "Icinga vm configs (site #{@site.id})") do |role|
           # log context is per fiber
           set_log_context!
 
-          icinga_dump_vms(role: role.name, os: role.os)
+          icinga_dump_vms(role: role.name, os: role.os, subdir: role.filename)
         end
 
         NetboxExtractor::Concurrency.each_isolated(@site.icinga.check_vhosts, "Icinga vhost configs (site #{@site.id})") do |check_vhost|
@@ -88,25 +110,25 @@ module NetboxExtractor
         Log.info { "Swapped generated Icinga config into #{final_path}" }
       end
 
-      private def icinga_dump_devices(role)
+      private def icinga_dump_devices(role, subdir = nil)
         inventory = @device_inventory.fetch_devices(role: role)
 
         if inventory.empty?
           Log.warn { "Skipping Icinga configs for '#{role}': no hosts" }
         else
           Log.info { "Generating Icinga hosts configs for '#{role}'" }
-          inventory.each { |host| save_icinga_host_config(host) }
+          inventory.each { |host| save_icinga_host_config(host, subdir) }
         end
       end
 
-      private def icinga_dump_vms(role, os)
+      private def icinga_dump_vms(role, os, subdir = nil)
         inventory = @vm_inventory.fetch_vms(role: role, os: os)
 
         if inventory.empty?
           Log.warn { "Skipping Icinga configs for '#{role}': no hosts" }
         else
           Log.info { "Generating Icinga vms configs for '#{role}'" }
-          inventory.each { |host| save_icinga_host_config(host) }
+          inventory.each { |host| save_icinga_host_config(host, subdir) }
         end
       end
 
@@ -126,8 +148,8 @@ module NetboxExtractor
         end
       end
 
-      private def save_icinga_host_config(host)
-        presenter = NetboxExtractor::Presenters::IcingaHost.new(@site, host)
+      private def save_icinga_host_config(host, subdir = nil)
+        presenter = NetboxExtractor::Presenters::IcingaHost.new(@site, host, subdir)
         presenter.save!
       end
 

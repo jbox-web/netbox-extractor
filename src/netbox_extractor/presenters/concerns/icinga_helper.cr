@@ -5,6 +5,12 @@ module NetboxExtractor
     # hostname, check type, OS details, disk partitions, CPU-scaled load
     # thresholds, and per-service check data (drac, esx, mysql, etc.).
     module IcingaHelper
+      # Named source of its own: constants resolve lexically, so a bare `Log`
+      # here binds to the top-level logger rather than to the including
+      # presenter's, leaving these warnings unattributable and unreachable by a
+      # per-source level. The host stays visible through `Log.context`.
+      Log = ::Log.for("netbox-extractor.icinga_helper")
+
       # Generates a `load_template_locals_check_<service>` helper that merges the
       # named service's custom check data into `locals` under `key` when present.
       macro define_method_load_template_locals(service, key)
@@ -160,7 +166,9 @@ module NetboxExtractor
         distro = @ansible_facts.try &.dig?("ansible_distribution")
         return nil if distro.nil?
 
-        distro.as_s.downcase
+        # `as_s?` like ansible_os_name above: a non-string fact is a bad file,
+        # not a reason to raise inside the host's fiber.
+        distro.as_s?.try(&.downcase)
       end
 
       private def partitions_list
@@ -172,7 +180,9 @@ module NetboxExtractor
             [] of String
           end
 
-        mounts = mounts.as_a.compact_map { |m| m["mount"]?.try(&.as_s) } if mounts.is_a?(JSON::Any)
+        # Same reasoning: `ansible_mounts` present but not an array yields no
+        # partitions rather than a TypeCastError.
+        mounts = mounts.as_a?.try(&.compact_map { |m| m["mount"]?.try(&.as_s) }) || [] of String if mounts.is_a?(JSON::Any)
         mounts - excluded
       end
 
@@ -191,7 +201,13 @@ module NetboxExtractor
         facts_file = NetboxExtractor.config.ansible.fetch_facts.cache_path.join("#{site.id}.#{host.name}")
         return nil unless File.exists?(facts_file)
 
-        JSON.parse(File.read(facts_file)).as_h
+        # A facts file is produced by an external Ansible run, so valid JSON that
+        # is not an object is a real possibility. `as_h?` yields nil there
+        # instead of raising a TypeCastError the rescue below never covered,
+        # which used to kill the host's fiber and abort the site's config swap.
+        facts = JSON.parse(File.read(facts_file)).as_h?
+        Log.warn { "Ignoring facts #{facts_file}: expected a JSON object" } if facts.nil?
+        facts
       rescue ex : JSON::ParseException | IO::Error
         Log.warn { "Ignoring unreadable facts #{facts_file}: #{ex.message}" }
         nil

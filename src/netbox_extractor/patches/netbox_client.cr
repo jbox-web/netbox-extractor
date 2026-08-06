@@ -22,30 +22,31 @@ module NetboxExtractor
       end
 
       # Sorted list of the object's effective tags: the Netbox tag slugs plus the
-      # role slug, with any `source-*` provenance tags stripped out. Returns
-      # `nil` when the object has no tags.
+      # role slug, with any `source-*` provenance tags stripped out. Netbox
+      # returns a null tags array (not an empty one) for an object that was
+      # never tagged, so the list is seeded empty rather than threaded as nil:
+      # otherwise the role slug was dropped and the SNMP/ping predicates
+      # answered nil instead of false.
       def netbox_tags
-        netbox_tags = tags.try &.map(&.slug)
+        netbox_tags = tags.try(&.map(&.slug)) || [] of String
         role_slug = netbox_role
 
-        if netbox_tags
-          netbox_tags.push(role_slug) if role_slug
-          netbox_tags.reject!(&.starts_with?("source-"))
-        end
-        netbox_tags.try &.sort
+        netbox_tags.push(role_slug) if role_slug
+        netbox_tags.reject!(&.starts_with?("source-"))
+        netbox_tags.sort
       end
 
       # True when the object carries the `check-by-snmp` tag, requesting SNMP
       # monitoring. Devices override this to also force SNMP for storage/network
       # roles.
       def netbox_check_by_snmp?
-        netbox_tags.try &.includes?("check-by-snmp")
+        netbox_tags.includes?("check-by-snmp")
       end
 
       # True when the object carries the `check-only-ping` tag, restricting
       # monitoring to a ping check.
       def netbox_check_by_ping?
-        netbox_tags.try &.includes?("check-only-ping")
+        netbox_tags.includes?("check-only-ping")
       end
 
       # Platform slug from Netbox (e.g. `debian-12`), or `"unknown"` when no
@@ -87,6 +88,14 @@ module NetboxExtractor
         netbox_os_name
       end
 
+      # Relative Icinga config file path for this object. The directory is the
+      # type-specific `netbox_icinga_subdir` unless the role's config supplies a
+      # `filename`, which overrides it — the key the example config has always
+      # carried and which nothing read until now.
+      def netbox_icinga_filename(subdir = nil)
+        File.join(subdir || netbox_icinga_subdir, "#{name}.conf")
+      end
+
       # True for physical hosts, based on the type-specific `netbox_host_type`.
       def netbox_physical?
         netbox_host_type == "physical"
@@ -98,8 +107,25 @@ module NetboxExtractor
       end
 
       # True when the object's Netbox status is `active`, treated as powered on.
+      # A null status counts as not powered on, so the object is filtered out;
+      # `netbox_status_known?` tells that case apart from an explicit non-active
+      # status, which is what the filters warn about.
       def netbox_powered_on?
         status.try(&.value) == "active"
+      end
+
+      # False when Netbox holds no status for the object at all. Distinguishes a
+      # missing value (a data problem worth reporting) from a deliberate
+      # non-active status.
+      def netbox_status_known?
+        !status.nil?
+      end
+
+      # False when Netbox holds no platform for the object, in which case
+      # `netbox_os_name` falls back to `"unknown"` and no OS-family check can
+      # match.
+      def netbox_platform_known?
+        !platform.nil?
       end
     end
   end

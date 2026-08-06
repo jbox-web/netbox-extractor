@@ -8,7 +8,9 @@ Spectator.describe NetboxExtractor::Controllers::TestApi::GET do
   describe ".log_result" do
     let(backend) { Log::MemoryBackend.new }
 
-    before_each { ::Log.setup(:debug, backend) }
+    # Scoped to the controller's own source: a global setup would lower the
+    # level for every other example and dump their logs into the run output.
+    before_each { ::Log.setup("netbox-extractor.test_api.get", :debug, backend) }
     after_each { ::Log.setup_from_env }
 
     it "never dumps the payload of a sensitive endpoint" do

@@ -26,7 +26,13 @@ module NetboxExtractor
       # Returns the loaded VMs matching `role` and `os`, after applying the shared
       # host filters (name safety, include/exclude lists, powered-on).
       def fetch_vms(role, os)
-        filter_objects @vms.select(&.netbox_has_role?(role)).select(&.netbox_is_os?(os))
+        filter_objects @vms.select(&.netbox_has_role?(role)).select { |vm| object_matches_os?(vm, os) }
+      end
+
+      # Names of every loaded VM, unfiltered. Used to report config entries that
+      # designate a host the site does not have.
+      def object_names
+        @vms.compact_map(&.name)
       end
 
       define_netbox_load name: :vms,

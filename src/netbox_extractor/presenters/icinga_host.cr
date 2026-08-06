@@ -22,11 +22,13 @@ module NetboxExtractor
 
       # Binds the presenter to its site and Netbox host, resolving the role-based
       # or generic template, the output path, and any cached Ansible facts.
-      def initialize(@site, @host)
+      # `subdir` comes from the role's `filename` and overrides the default
+      # output directory when set.
+      def initialize(@site, @host, subdir : String? = nil)
         super()
 
         @template = (get_template?("icinga/#{@host.netbox_role}.j2") || get_template("icinga/generic-host.j2")).gets_to_end
-        @icinga_filename = @site.icinga_zones_path.join(@host.netbox_icinga_filename)
+        @icinga_filename = @site.icinga_zones_path.join(@host.netbox_icinga_filename(subdir))
         @ansible_facts = fetch_ansible_facts(@site, @host)
       end
     end

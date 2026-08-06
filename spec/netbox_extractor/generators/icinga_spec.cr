@@ -9,6 +9,29 @@ class RaisingConnection < NetboxClient::Connection
 end
 
 Spectator.describe NetboxExtractor::Generators::Icinga do
+  # An entry naming a host the site does not have is dead config: the tuning it
+  # carries applies to nothing, and nothing said so.
+  describe ".orphan_checks_config" do
+    let(entries) do
+      [
+        NetboxExtractor::Config::Icinga::SiteCheckConfig.from_yaml("host: web1.example.com"),
+        NetboxExtractor::Config::Icinga::SiteCheckConfig.from_yaml("host: gone"),
+      ]
+    end
+
+    it "keeps only the entries matching no loaded host" do
+      orphans = NetboxExtractor::Generators::Icinga.orphan_checks_config(entries, ["web1", "db1"])
+
+      expect(orphans.map(&.host)).to eq(["gone"])
+    end
+
+    it "reports every entry when nothing was loaded" do
+      orphans = NetboxExtractor::Generators::Icinga.orphan_checks_config(entries, [] of String)
+
+      expect(orphans.size).to eq(2)
+    end
+  end
+
   # C1: a transient Netbox failure must never be mistaken for "zero hosts" and
   # wipe the existing Icinga config. With build-then-swap the live directory is
   # only touched on success, so a load failure leaves it fully intact.

@@ -21,16 +21,39 @@ module NetboxExtractor
       @[YAML::Field(ignore: true)]
       property icinga_staging_path : Path? = nil
 
+      # A role `filename` is concatenated into an output path, so it has to be a
+      # single safe path segment — the same guarantee the Netbox host names get
+      # from `InventoryFilters::SAFE_NAME`.
+      SAFE_FILENAME = /\A[A-Za-z0-9._-]+\z/
+
       # Raises if two Ansible roles resolve to the same inventory filename: they
       # would be written concurrently (device roles) or overwrite one another
-      # (a device and a vm role sharing a name), silently losing hosts.
+      # (a device and a vm role sharing a name), silently losing hosts. Also
+      # raises on any role filename that is not a safe path segment.
       def validate!
+        validate_unique_ansible_filenames!
+        validate_safe_filenames!
+      end
+
+      private def validate_unique_ansible_filenames!
         names = ansible.include_device_roles.map { |r| r.filename || r.name } +
                 ansible.include_vm_roles.map { |r| r.filename || r.name }
         dupes = names.select { |n| names.count(n) > 1 }.uniq!
         return if dupes.empty?
 
         raise ValidationError.new("Site '#{id}': duplicate Ansible inventory filename(s): #{dupes.join(", ")}")
+      end
+
+      private def validate_safe_filenames!
+        filenames = [ansible.include_device_roles.compact_map(&.filename),
+                     ansible.include_vm_roles.compact_map(&.filename),
+                     icinga.include_device_roles.compact_map(&.filename),
+                     icinga.include_vm_roles.compact_map(&.filename)].flatten
+
+        unsafe = filenames.reject(&.matches?(SAFE_FILENAME))
+        return if unsafe.empty?
+
+        raise ValidationError.new("Site '#{id}': unsafe role filename(s): #{unsafe.join(", ")}")
       end
 
       # Name of the Icinga2 zone directory for this site (its `id`).

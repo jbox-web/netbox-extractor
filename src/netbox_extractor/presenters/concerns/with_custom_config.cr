@@ -31,8 +31,26 @@ module NetboxExtractor
       define_method_check_service :postgres
       define_method_check_service :rabbit
 
+      # True when a `checks_config` entry designates the same host as a Netbox
+      # name. Exact string equality made an entry keyed by FQDN — or differing
+      # only in case — fall through to the default checks, losing the entry's
+      # credentials and thresholds without a word. Matching is therefore
+      # case-insensitive and tolerates one side carrying a domain, but stops at
+      # a full label so `web12` never matches `web1`. Exposed on the module so
+      # the Icinga generator reports orphan entries under the very same rule.
+      def self.matches_host?(config_host, netbox_name)
+        return false if netbox_name.nil?
+
+        config_host = config_host.downcase
+        netbox_name = netbox_name.downcase
+
+        config_host == netbox_name ||
+          config_host.starts_with?("#{netbox_name}.") ||
+          netbox_name.starts_with?("#{config_host}.")
+      end
+
       private def find_custom_config_for(host)
-        @site.icinga.checks_config.find { |c| c.host == host.name }
+        @site.icinga.checks_config.find { |c| WithCustomConfig.matches_host?(c.host, host.name) }
       end
     end
   end

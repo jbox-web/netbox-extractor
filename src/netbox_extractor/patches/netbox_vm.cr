@@ -24,9 +24,9 @@ class NetboxClient::VirtualMachineWithConfigContext
     nil
   end
 
-  # Relative Icinga config file path for this VM:
-  # `<role>-<os_family>/<name>.conf`.
-  def netbox_icinga_filename
-    File.join("#{netbox_role}-#{netbox_os_family}", "#{name}.conf")
+  # Default Icinga output subdirectory for a VM: `<role>-<os_family>`.
+  # Overridden by the role's `filename` when the config sets one.
+  def netbox_icinga_subdir
+    "#{netbox_role}-#{netbox_os_family}"
   end
 end
