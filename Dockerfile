@@ -6,6 +6,11 @@ FROM alpine:3.24 AS crystal
 
 RUN apk add --update --no-cache \
   make \
+  # Deliberately loose on the patch level: this follows whatever Alpine 3.24
+  # ships, which can differ from the exact version mise.toml pins for
+  # development. Pinning `=~1.20.3` here would break the release build outright
+  # the day Alpine's package moves, so the drift is accepted and recorded
+  # rather than traded for a hard failure.
   crystal=~1.20 \
   shards \
   gc-dev \

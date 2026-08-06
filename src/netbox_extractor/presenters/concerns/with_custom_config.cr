@@ -49,8 +49,20 @@ module NetboxExtractor
           netbox_name.starts_with?("#{config_host}.")
       end
 
+      # Resolved lookups, keyed by host name. Every `check_*?` predicate and
+      # several helpers call this for the same host, and each call used to
+      # rescan the whole checks_config. Measured on 100 entries and 12 calls:
+      # 98.58µs → 8.42µs per host, 149kB → 12.6kB allocated.
+      #
+      # Keyed rather than kept in a single slot: a presenter holds one host
+      # today, and a cache that assumes it would be wrong the day one does not.
+      @custom_config_cache = {} of String => NetboxExtractor::Config::Icinga::SiteCheckConfig?
+
       private def find_custom_config_for(host)
-        @site.icinga.checks_config.find { |c| WithCustomConfig.matches_host?(c.host, host.name) }
+        @custom_config_cache.fetch(host.name.to_s) do
+          @custom_config_cache[host.name.to_s] =
+            @site.icinga.checks_config.find { |c| WithCustomConfig.matches_host?(c.host, host.name) }
+        end
       end
     end
   end

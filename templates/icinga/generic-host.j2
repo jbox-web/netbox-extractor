@@ -29,7 +29,7 @@ object Host "{{ hostname | icinga_string }}" {
   vars.config["server"]["vendor_name"]    = "{{ vendor_name | icinga_string }}"
   vars.config["server"]["vendor_model"]   = "{{ vendor_model | icinga_string }}"
   {%- endif -%}
-  {%- if true -%}
+  {%- if partitions_list -%}
 
   # Storage config
   vars.config["storage"]["partitions"] = {{ partitions_list | sort | icinga_array }}

@@ -53,7 +53,7 @@ module NetboxExtractor
     Dotenv.load? File.expand_path(env_path)
     config_template = File.read(File.expand_path(config_path))
     config_file = NetboxExtractor::Utils.render_template(config_template, {"ENV" => ENV.to_h})
-    self.config = Config::Base.from_yaml(config_file)
+    self.config = Config::Base.parse(config_file, config_path)
     config.source_path = config_path
     config.validate!
   rescue ex : Crinja::Error

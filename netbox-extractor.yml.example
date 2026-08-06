@@ -125,8 +125,11 @@ sites:
               username: <username>
               password: <password>
             aggregates:
-              warning: 87
-              critical: 90
+              # Quoted, and with the unit: these are Strings whose defaults are
+              # "80%" / "85%". A bare 87 loads as "87" and silently loses the
+              # percent sign the template expects.
+              warning: "87%"
+              critical: "90%"
             volumes:
               - /vol/nfs_vol1
               - /vol/nfs_vol2

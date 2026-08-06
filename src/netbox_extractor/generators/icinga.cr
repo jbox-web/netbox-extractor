@@ -93,12 +93,37 @@ module NetboxExtractor
         icinga_dump_custom_hosts(@site.icinga.check_custom_hosts)
       end
 
+      # Swaps the staged zone over the live one, leaving no window in which the
+      # site has no config at all. Deleting the live directory first and then
+      # renaming left exactly that window: a crash in between — or a failed
+      # rename — took the site's Icinga config with it.
+      #
+      # The old directory is moved aside first, so the destination is free for a
+      # rename that is atomic within the same parent, and only then removed. If
+      # the rename fails, the old config is put back.
       private def swap_into_place(staging_path, final_path)
-        FileUtils.rm_rf final_path
-        FileUtils.mkdir_p final_path.parent
-        File.rename(staging_path.to_s, final_path.to_s)
+        Icinga.swap_directory(staging_path, final_path, final_path.parent.join(".#{@site.id}.previous"))
 
         Log.info { "Swapped generated Icinga config into #{final_path}" }
+      end
+
+      # Moves `staging_path` onto `final_path`. Free of logging and of the
+      # generator's state so the sequence itself can be exercised.
+      def self.swap_directory(staging_path, final_path, previous_path)
+        FileUtils.mkdir_p final_path.parent
+        FileUtils.rm_rf previous_path
+
+        had_previous = File.exists?(final_path)
+        File.rename(final_path.to_s, previous_path.to_s) if had_previous
+
+        begin
+          File.rename(staging_path.to_s, final_path.to_s)
+        rescue ex
+          File.rename(previous_path.to_s, final_path.to_s) if had_previous
+          raise ex
+        end
+
+        FileUtils.rm_rf previous_path
       end
 
       private def icinga_dump_devices(role, subdir = nil)
