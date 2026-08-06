@@ -12,7 +12,9 @@ module NetboxExtractor
       getter defaults = Crinja::Variables.new
 
       # Returns the filter target escaped for an Icinga2 double-quoted string,
-      # backslash-escaping `\`, `"` and the whitespace control characters.
+      # backslash-escaping `\`, `"` and the whitespace control characters, and
+      # doubling `$` — Icinga2 reads `$name$` inside a double-quoted string as a
+      # runtime macro, so a literal dollar has to be written `$$`.
       def call(arguments)
         (arguments.target.try(&.to_string) || "")
           .gsub('\\', "\\\\")
@@ -20,6 +22,7 @@ module NetboxExtractor
           .gsub('\n', "\\n")
           .gsub('\r', "\\r")
           .gsub('\t', "\\t")
+          .gsub('$', "$$")
       end
     end
 
@@ -37,10 +40,12 @@ module NetboxExtractor
       # encoding each element so it is individually quoted and escaped. Elements
       # are joined with ", " to match the historical spacing and avoid churn in
       # already-generated files (the spacing is cosmetic; Icinga2 parses both).
+      # `$` is doubled before encoding: it is not a JSON metacharacter, so JSON
+      # alone would let it through as an Icinga2 macro delimiter.
       def call(arguments)
         target = arguments.target
         elements = target ? target.to_a : [] of Crinja::Value
-        "[" + elements.map(&.to_string.to_json).join(", ") + "]"
+        "[" + elements.map(&.to_string.gsub('$', "$$").to_json).join(", ") + "]"
       end
     end
   end

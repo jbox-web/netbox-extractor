@@ -11,7 +11,10 @@ module NetboxExtractor
         # Invokes the given API call block, logging the call and its result on
         # success or the exception message on failure. Failures are swallowed so
         # one broken endpoint does not abort the rest of the smoke test.
-        def self.with_debug(api, method, &)
+        # Pass `sensitive: true` for an endpoint whose payload carries secrets or
+        # personal data: the call is still exercised, but only its count is
+        # logged (S3).
+        def self.with_debug(api, method, sensitive = false, &)
           Log.info { "Calling #{api}.#{method}" }
 
           begin
@@ -19,19 +22,22 @@ module NetboxExtractor
           rescue e : Exception
             Log.warn { e.message }
           else
-            log_result(result)
+            log_result(result, sensitive)
           end
         end
 
         # Logs the size of a returned collection (using `size` for arrays and
         # `count` otherwise) at info level and the full YAML dump at debug level.
-        def self.log_result(result)
+        # The dump is skipped for a sensitive result: the log file outlives the
+        # run and is not a secret store, so dumping the users API would write
+        # Netbox API tokens to disk in clear text (S3).
+        def self.log_result(result, sensitive = false)
           if result.is_a?(Array)
             Log.info { "count: #{result.size}" }
           else
             Log.info { "count: #{result.count}" }
           end
-          Log.debug { YAML.dump(result) }
+          Log.debug { YAML.dump(result) } unless sensitive
         end
 
         # Lists every endpoint under the Netbox `circuits` API group.
@@ -180,9 +186,9 @@ module NetboxExtractor
         def self.test_users_api
           client = NetboxExtractor.client.users
           with_debug("users", "groups.list") { client.groups.list.value }
-          with_debug("users", "permissions.list") { client.permissions.list.value }
-          with_debug("users", "tokens.list") { client.tokens.list.value }
-          with_debug("users", "users.list") { client.users.list.value }
+          with_debug("users", "permissions.list", sensitive: true) { client.permissions.list.value }
+          with_debug("users", "tokens.list", sensitive: true) { client.tokens.list.value }
+          with_debug("users", "users.list", sensitive: true) { client.users.list.value }
         end
 
         # Lists every endpoint under the Netbox `virtualization` API group.

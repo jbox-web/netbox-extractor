@@ -48,6 +48,12 @@ object Host "{{ hostname | icinga_string }}" {
 
   {%- if icinga_check_rabbit_data -%}
   # RabbitMQ config
+  # Credentials below (and in the mysql/postgres blocks, and in the esx and
+  # netapp templates) are deliberately NOT quoted: the config holds the name of
+  # an Icinga2 constant declared in constants.conf, and quoting it would hand
+  # the check the constant's name instead of its value, silently. A literal
+  # credential containing a space or a quote would need quoting — put it in a
+  # constant instead.
   vars.config["rabbit"]["username"] = {{ icinga_check_rabbit_data["username"] }}
   vars.config["rabbit"]["password"] = {{ icinga_check_rabbit_data["password"] }}
   vars.config["rabbit"]["node"]     = "{{ icinga_check_rabbit_data["node"] | icinga_string }}"
