@@ -1,18 +1,23 @@
 require "../../spec_helper"
 
 # Stand-ins for the generated Netbox types: the mixin only reads `slug` off
-# tags and role.
+# tags, role and platform.
 private record FakeSlug, slug : String
 
-# Minimal host carrying the mixin, with just the fields `netbox_tags` reads.
+# Minimal host carrying the mixin, with just the fields the helpers read.
 private class FakeHost
   include NetboxExtractor::Patches::NetboxClient
 
   getter tags : Array(FakeSlug)?
   getter role : FakeSlug?
   getter name : String?
+  getter platform : FakeSlug?
 
-  def initialize(@tags : Array(FakeSlug)?, @role : FakeSlug? = FakeSlug.new("storage"), @name : String? = "host1")
+  def initialize(@tags : Array(FakeSlug)? = nil,
+                 @role : FakeSlug? = FakeSlug.new("storage"),
+                 @name : String? = "host1",
+                 platform : String? = nil)
+    @platform = platform.try { |slug| FakeSlug.new(slug) }
   end
 
   # Type-specific part, as the real device and VM patches provide it.
@@ -56,6 +61,56 @@ Spectator.describe NetboxExtractor::Patches::NetboxClient do
 
     it "uses the role's configured filename as the subdirectory when given" do
       expect(FakeHost.new(nil).netbox_icinga_filename("physical-linux")).to eq("physical-linux/host1.conf")
+    end
+  end
+
+  # OS detection is what decides whether a host enters an inventory at all
+  # (fetch_vms selects on netbox_is_os?), and it had no spec whatsoever.
+  describe "OS detection" do
+    it "reads the platform slug, falling back to unknown" do
+      expect(FakeHost.new(platform: "debian-12").netbox_os_name).to eq("debian-12")
+      expect(FakeHost.new.netbox_os_name).to eq("unknown")
+    end
+
+    it "classes the Linux-family slugs as linux" do
+      %w[linux debian-12 ubuntu-24-04 vmkernel-7 vmware-esxi].each do |slug|
+        host = FakeHost.new(platform: slug)
+
+        expect(host.netbox_linux?).to be_true
+        expect(host.netbox_os_family).to eq("linux")
+        expect(host.netbox_is_os?("linux")).to be_true
+      end
+    end
+
+    it "classes the Windows slugs as windows" do
+      %w[windows microsoft-windows-2022].each do |slug|
+        host = FakeHost.new(platform: slug)
+
+        expect(host.netbox_windows?).to be_true
+        expect(host.netbox_os_family).to eq("windows")
+        expect(host.netbox_is_os?("windows")).to be_true
+      end
+    end
+
+    it "matches no family without a platform, which is what makes the host vanish" do
+      host = FakeHost.new
+
+      expect(host.netbox_is_os?("linux")).to be_false
+      expect(host.netbox_is_os?("windows")).to be_false
+      expect(host.netbox_os_family).to eq("unknown")
+    end
+
+    it "returns false for an OS name it does not dispatch on" do
+      expect(FakeHost.new(platform: "debian-12").netbox_is_os?("bsd")).to be_false
+    end
+
+    # Documents current behaviour, not desired behaviour: detection is a
+    # substring test and linux is tried first, so a slug carrying both words is
+    # classed linux. Left as-is pending a decision — changing it would move
+    # hosts between inventories.
+    it "classes a slug carrying both words as linux, linux being tested first" do
+      expect(FakeHost.new(platform: "windows-subsystem-linux").netbox_linux?).to be_true
+      expect(FakeHost.new(platform: "windows-subsystem-linux").netbox_os_family).to eq("linux")
     end
   end
 
