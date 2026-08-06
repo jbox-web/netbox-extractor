@@ -23,7 +23,12 @@ module NetboxExtractor
           # A transient load failure must never be mistaken for "zero objects":
           # re-raise so the caller aborts before any destructive regeneration step
           # (File.delete / rm_rf) wipes existing output (C1/C2).
-          Log.error(exception: ex) { "{{log.id}}: load failed" }
+          #
+          # The message, not the exception: attaching it would print a full stack
+          # trace here AND hand the same exception to the caller, who reports it
+          # again — each_isolated logs it with its stack, `config check` turns it
+          # into a one-line finding that a trace then buried.
+          Log.error { "{{log.id}}: load failed: #{ex.message}" }
           raise ex
         end
       end
