@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-08-06
+
+> **Upgrade note.** The `filename` key of an Icinga role was accepted by the
+> config and read by nothing; it now sets the output subdirectory, as the
+> shipped example config had always implied. A site declaring `filename:
+> "physical-linux"` for the `server-linux` role therefore writes to
+> `physical-linux/` instead of `server-linux/` on the next run. The files of the
+> old directory are not migrated — the swap only creates what generation
+> produces — so the Icinga zone changes shape server-side. Check your
+> `include_device_roles` and `include_vm_roles` before upgrading; `config check`
+> shows what the config resolves to.
+>
+> Two smaller behaviour changes: an unknown subcommand now exits `1` instead of
+> printing the help and exiting `0`, which may surface in a cron or CI job that
+> was silently doing nothing; and a role `filename` that is not a safe path
+> segment is now refused at validation.
+
 ### Added
 
 - `config check`: reports what a generation run would quietly ignore, and

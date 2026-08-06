@@ -1,6 +1,6 @@
 name: netbox-extractor
 
-version: 1.0.1
+version: 2.0.0
 
 crystal: '>= 1.18.0'
 
