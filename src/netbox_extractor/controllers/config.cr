@@ -6,6 +6,63 @@ module NetboxExtractor
     # of the command, not a trace of a run, and it has to be readable when the
     # log level says otherwise or the log goes to a file.
     module Config
+      # Keys whose value never belongs on a terminal or in a CI log. Redacted
+      # textually, on the serialised YAML rather than on the object tree: a new
+      # check type carrying a password is then covered the day it is added,
+      # instead of the day someone remembers to update a list of fields.
+      SECRET_KEYS = %w[api_token password]
+
+      REDACTED = "<redacted>"
+
+      # Dumps the effective configuration — the template rendered, the
+      # sites_config: files merged in, the defaults applied — with secrets
+      # removed. Returns the process exit status.
+      #
+      # This is what the program actually understood, which is the point: the
+      # file on disk is a template, and what it resolves to is not obvious.
+      def self.dump(config_path, env_path, nbe_site) : Int32
+        begin
+          NetboxExtractor.load_config(config_path, env_path)
+        rescue ex : Exception
+          puts "ERROR  #{ex.message}"
+          return 1
+        end
+
+        begin
+          yaml = dumpable(nbe_site).to_yaml
+        rescue ex : Exception
+          puts "ERROR  #{ex.message}"
+          return 1
+        end
+
+        puts redact_secrets(yaml)
+        0
+      end
+
+      # The whole config, or a single site when one was named.
+      private def self.dumpable(nbe_site)
+        return NetboxExtractor.config if nbe_site == "all"
+
+        site = NetboxExtractor.config.sites.find { |s| s.id == nbe_site }
+        raise "Unknown site: #{nbe_site}" if site.nil?
+
+        site
+      end
+
+      # Replaces the value of every secret-bearing key, keeping the key, its
+      # indentation and the line count so the result still reads as the config
+      # it came from.
+      #
+      # The `m` flag is required and not incidental: in Crystal it turns on both
+      # per-line `^`/`$` and a dot that matches newlines (verified — without it
+      # this pattern matches nothing at all). `[^\n]*` rather than `.*` keeps the
+      # second effect from swallowing the rest of the document.
+      def self.redact_secrets(yaml : String) : String
+        yaml.gsub(/^(\s*)(#{SECRET_KEYS.join("|")}):[^\n]*/m) do |_, match|
+          "#{match[1]}#{match[2]}: #{REDACTED}"
+        end
+      end
+
       # Checks the configuration and returns the process exit status.
       #
       # An unreadable or invalid file is reported as a plain message, not as a

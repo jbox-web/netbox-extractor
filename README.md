@@ -29,6 +29,7 @@ netbox-extractor <subcommand> <action> [flags...]
 | `icinga generate`      | Generate Icinga2 configuration files           |
 | `bind generate`        | Generate Bind DNS zone data                    |
 | `config check`         | Check the configuration without generating     |
+| `config dump`          | Print the effective configuration, secrets redacted |
 | `test_api get`         | Check connectivity to the Netbox API           |
 
 Common flags:
@@ -83,6 +84,27 @@ pipeline unless `--strict` says they should:
 ```sh
 netbox-extractor config check --with-netbox --strict
 ```
+
+### Seeing the effective configuration
+
+The file on disk is a template: it interpolates `ENV`, and it may pull whole
+sites in from `sites_config:`. `config dump` prints what the program actually
+ended up with — template rendered, external site files merged, defaults
+applied:
+
+```sh
+netbox-extractor config dump
+
+# One site only
+netbox-extractor config dump --site dc1
+```
+
+The output is valid YAML, so it can be piped into anything that reads YAML.
+
+**Secrets are redacted**: `api_token` and every `password` come out as
+`<redacted>`. There is no flag to reveal them — the value would land on a
+terminal, in a redirected file, and in the log of whichever CI job ran the
+command. Read the config file itself if you need them.
 
 ## Configuration
 

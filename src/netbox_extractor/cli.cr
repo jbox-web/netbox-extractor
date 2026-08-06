@@ -234,7 +234,38 @@ module NetboxExtractor
         end
       end
 
+      # Prints the effective configuration: the template rendered, the
+      # sites_config: files merged in, the defaults applied — which is not what
+      # any single file on disk says. Secrets are redacted.
+      class Dump < Admiral::Command
+        define_help description: "Print the effective configuration"
+
+        define_flag config : String,
+          description: "Path to config file",
+          long: "config",
+          short: "c",
+          default: "netbox-extractor.yml"
+
+        define_flag env : String,
+          description: "Path to env file",
+          long: "env",
+          short: "e",
+          default: ".env"
+
+        define_flag site : String,
+          description: "Site",
+          long: "site",
+          short: "s",
+          default: "all"
+
+        def run
+          status = NetboxExtractor::Controllers::Config.dump(flags.config, flags.env, flags.site)
+          exit status
+        end
+      end
+
       register_sub_command check, Check, description: "Check the configuration"
+      register_sub_command dump, Dump, description: "Print the effective configuration"
 
       def run
         run_parent
