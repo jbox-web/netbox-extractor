@@ -44,14 +44,21 @@ run = "shards install"
 description = "Cleanup environment"
 run = "rm -rf bin/* lib/"
 
+# Bounded like dev:ameba, and for the same reason the ameba comment already
+# names: a spec run can spin forever. Observed here — the multi-threaded binary
+# ran 11 minutes at 100% CPU on a tree whose only change was documentation, then
+# passed in 176ms on the next attempt. A livelock of that kind fails nowhere:
+# with no bound the CI job holds a runner until GitHub's own 6h job timeout
+# instead of failing in minutes with exit 124. 600s leaves room for a cold
+# compile on a slow runner.
 [tasks."dev:spec"]
 description = "Run Crystal spec"
-run = "crystal spec {{vars.SPEC_OPTS}}"
+run = "timeout 600 crystal spec {{vars.SPEC_OPTS}}"
 
 [tasks."dev:spec-mt"]
 description = "Run Crystal spec (multi-threaded)"
 env = { CRYSTAL_WORKERS = "4" }
-run = "crystal spec {{vars.SPEC_OPTS}} -Dpreview_mt"
+run = "timeout 600 crystal spec {{vars.SPEC_OPTS}} -Dpreview_mt"
 
 [tasks."dev:docs"]
 description = "Generate project documentation"
