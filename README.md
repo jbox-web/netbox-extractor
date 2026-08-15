@@ -23,7 +23,7 @@ If you use [mise](https://mise.jdx.dev/), install it from the
 aqua.registries = ["https://github.com/jbox-web/aqua-registry"]
 
 [tools]
-"aqua:jbox-web/netbox-extractor" = "2.0.0"
+"aqua:jbox-web/netbox-extractor" = "2.1.0"
 ```
 
 The registry has to be declared: the tool is not in the default aqua registry,

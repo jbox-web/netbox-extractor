@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-08-15
+
+### Changed
+
+- Every generated file now opens with a banner saying it is generated and will
+  be overwritten. This covers the Icinga host, vhost and custom-host configs,
+  the Ansible fact-gathering playbook and `ansible.cfg`, and the Bind IP dump;
+  the Ansible inventories already carried one. The banner is a comment in each
+  format, so Icinga2, Ansible and any YAML parser ignore it — but a diff of
+  your generated tree will show one added line per file on the first run after
+  the upgrade.
+
 ## [2.0.0] - 2026-08-06
 
 > **Upgrade note.** The `filename` key of an Icinga role was accepted by the
