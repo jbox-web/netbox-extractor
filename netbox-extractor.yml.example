@@ -119,6 +119,10 @@ sites:
             password: <password>
             check_slave: true
 
+          check_opensearch:
+            username: <username>
+            password: <password>
+
           check_netapp:
             check_api:
               base_url: <url>

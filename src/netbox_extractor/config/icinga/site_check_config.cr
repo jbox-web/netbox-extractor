@@ -16,6 +16,7 @@ module NetboxExtractor
         property check_mysql : Checks::Mysql?
         property check_netapp : Checks::Netapp?
         property check_nfs : Checks::NFS?
+        property check_opensearch : Checks::Opensearch?
         property check_partitions : Checks::Partitions?
         property check_php : Checks::Php?
         property check_postgres : Checks::Postgres?

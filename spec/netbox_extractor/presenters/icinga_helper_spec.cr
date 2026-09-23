@@ -11,6 +11,23 @@ private class FactsHarness
   end
 end
 
+private record FakeCheckedHost, name : String?
+
+# Wires the per-host check lookup into the template locals, as IcingaHost does.
+private class CheckLocalsHarness
+  include NetboxExtractor::Presenters::WithCustomConfig
+  include NetboxExtractor::Presenters::IcingaHelper
+
+  def initialize(@site : NetboxExtractor::Config::Site, @host : FakeCheckedHost)
+  end
+
+  def opensearch_locals
+    locals = {} of String => Hash(String, String)
+    load_template_locals_check_opensearch(locals)
+    locals
+  end
+end
+
 Spectator.describe NetboxExtractor::Presenters::IcingaHelper do
   let(config) do
     path = File.expand_path("../../../netbox-extractor.yml.example", __DIR__)
@@ -56,6 +73,27 @@ Spectator.describe NetboxExtractor::Presenters::IcingaHelper do
       ensure
         FileUtils.rm_rf tmp
       end
+    end
+  end
+
+  describe "#load_template_locals_check_opensearch" do
+    it "exposes the host's check_opensearch credentials to the template" do
+      site = config.sites.first
+      entry = NetboxExtractor::Config::Icinga::SiteCheckConfig.from_yaml(
+        "host: search1\ncheck_opensearch:\n  username: JAGUAR_OPENSEARCH_USER\n  password: JAGUAR_OPENSEARCH_PASS\n")
+      site.icinga.checks_config << entry
+
+      locals = CheckLocalsHarness.new(site, FakeCheckedHost.new("search1")).opensearch_locals
+
+      expect(locals).to eq({
+        "icinga_check_opensearch_data" => {"username" => "JAGUAR_OPENSEARCH_USER", "password" => "JAGUAR_OPENSEARCH_PASS"},
+      })
+    end
+
+    it "leaves the locals untouched for a host without check_opensearch" do
+      locals = CheckLocalsHarness.new(config.sites.first, FakeCheckedHost.new("nothing-here")).opensearch_locals
+
+      expect(locals).to be_empty
     end
   end
 end

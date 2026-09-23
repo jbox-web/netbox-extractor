@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `check_opensearch` in a host's `checks_config` entry: its `username` and
+  `password` are rendered as `vars.config["opensearch"]` in the host's Icinga
+  config. Like the other credentials, they are emitted unquoted, so they can
+  name an Icinga2 constant such as `JAGUAR_OPENSEARCH_PASS`.
+
 ## [2.1.0] - 2026-08-15
 
 ### Changed

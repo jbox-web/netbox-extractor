@@ -61,4 +61,34 @@ Spectator.describe "Icinga templates" do
       end
     end
   end
+
+  # The OpenSearch check reads its credentials from the host's vars.config,
+  # like RabbitMQ and MySQL. Without this block the check runs unauthenticated
+  # on every regeneration.
+  describe "opensearch" do
+    it "renders the credentials as Icinga2 constant references" do
+      dir = File.expand_path("../../templates/icinga", __DIR__)
+      locals = {
+        "hostname"                     => "host1",
+        "icinga_zone"                  => "zone1",
+        "ipv4_address"                 => "10.0.0.1",
+        "check_type"                   => "ssh",
+        "host_zone"                    => "dc1",
+        "host_type"                    => "virtual",
+        "hosting_node"                 => "esx1",
+        "tags"                         => [] of String,
+        "os_name"                      => "linux",
+        "os_family"                    => "debian",
+        "partitions_list"              => [] of String,
+        "icinga_check_opensearch_data" => {"username" => "JAGUAR_OPENSEARCH_USER", "password" => "JAGUAR_OPENSEARCH_PASS"},
+      }
+      variables = Crinja::Variables.new
+      locals.each { |k, v| variables[k] = Crinja::Value.new(v) }
+
+      rendered = NetboxExtractor::Utils::CRINJA.from_string(File.read(File.join(dir, "generic-host.j2"))).render(variables)
+
+      expect(rendered).to contain(%q(vars.config["opensearch"]["username"] = JAGUAR_OPENSEARCH_USER))
+      expect(rendered).to contain(%q(vars.config["opensearch"]["password"] = JAGUAR_OPENSEARCH_PASS))
+    end
+  end
 end

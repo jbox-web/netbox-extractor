@@ -27,6 +27,7 @@ module NetboxExtractor
       define_method_load_template_locals :mysql, "icinga_check_mysql_data"
       define_method_load_template_locals :netapp, "icinga_check_netapp_data"
       define_method_load_template_locals :nfs, "icinga_check_nfs_data"
+      define_method_load_template_locals :opensearch, "icinga_check_opensearch_data"
       define_method_load_template_locals :php, "icinga_check_php_data"
       define_method_load_template_locals :postgres, "icinga_check_postgres_data"
       define_method_load_template_locals :rabbit, "icinga_check_rabbit_data"
@@ -41,6 +42,7 @@ module NetboxExtractor
           load_template_locals_check_mysql(locals)
           load_template_locals_check_netapp(locals)
           load_template_locals_check_nfs(locals)
+          load_template_locals_check_opensearch(locals)
           load_template_locals_check_php(locals)
           load_template_locals_check_postgres(locals)
           load_template_locals_check_rabbit(locals)

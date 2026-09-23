@@ -74,6 +74,11 @@ object Host "{{ hostname | icinga_string }}" {
   vars.config["mysql"]["password"]    = {{ icinga_check_mysql_data["password"] }}
   vars.config["mysql"]["check_slave"] = {{ icinga_check_mysql_data["check_slave"] }}
   {%- endif -%}
+  {%- if icinga_check_opensearch_data -%}
+  # OpenSearch config
+  vars.config["opensearch"]["username"] = {{ icinga_check_opensearch_data["username"] }}
+  vars.config["opensearch"]["password"] = {{ icinga_check_opensearch_data["password"] }}
+  {%- endif -%}
   {%- if icinga_check_postgres_data -%}
   # Postgres config
   vars.config["postgres"]["instances"] = {

@@ -26,6 +26,7 @@ module NetboxExtractor
       define_method_check_service :mysql
       define_method_check_service :netapp
       define_method_check_service :nfs
+      define_method_check_service :opensearch
       define_method_check_service :partitions
       define_method_check_service :php
       define_method_check_service :postgres
