@@ -1,0 +1,52 @@
+{
+  "id": 7054,
+  "url": "https://netbox.example.net/api/ipam/ip-addresses/7054/",
+  "display_url": "https://netbox.example.net/ipam/ip-addresses/1096/",
+  "display": "192.0.2.54/24",
+  "family": {
+    "value": 4,
+    "label": "IPv4"
+  },
+  "address": "192.0.2.54/24",
+  "vrf": null,
+  "tenant": {
+    "id": 1,
+    "url": "https://netbox.example.net/api/tenancy/tenants/1/",
+    "display": "SeeTickets FR",
+    "name": "SeeTickets FR",
+    "slug": "seetickets-fr",
+    "description": ""
+  },
+  "status": {
+    "value": "active",
+    "label": "Active"
+  },
+  "role": null,
+  "assigned_object_type": "dcim.interface",
+  "assigned_object_id": 9054,
+  "assigned_object": {
+    "id": 9054,
+    "url": "https://netbox.example.net/api/dcim/interfaces/9054/",
+    "display": "iDrac9",
+    "device": {
+      "id": 43,
+      "url": "https://netbox.example.net/api/dcim/devices/43/",
+      "display": "esx07.lab01",
+      "name": "esx07.lab01",
+      "description": ""
+    },
+    "name": "iDrac9",
+    "description": "",
+    "cable": null,
+    "_occupied": false
+  },
+  "nat_inside": null,
+  "nat_outside": [],
+  "dns_name": "drac-esx07.lab01",
+  "description": "",
+  "comments": "",
+  "tags": [],
+  "custom_fields": {},
+  "created": "2021-12-03T01:00:00+01:00",
+  "last_updated": "2021-12-03T03:30:44.469254+01:00"
+}

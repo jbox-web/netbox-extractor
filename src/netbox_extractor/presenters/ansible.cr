@@ -13,7 +13,7 @@ module NetboxExtractor
       Log = ::Log.for("netbox-extractor.ansible")
 
       @site : NetboxExtractor::Config::Site
-      @host : NetboxClient::DeviceWithConfigContext | NetboxClient::VirtualMachineWithConfigContext
+      @host : NetboxClient::DeviceWithConfigContext | NetboxClient::VirtualMachineWithConfigContext | NetboxExtractor::Netbox::BmcHost
 
       # Binds the presenter to a `Config::Site` and the Netbox `@host` to render.
       def initialize(@site, @host)

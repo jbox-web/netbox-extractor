@@ -152,6 +152,17 @@ loadable example.
 * **Tag-driven behavior** — the `check-by-snmp` tag forces SNMP monitoring,
   `check-only-ping` restricts a host to a ping check; OS detection is based on the
   Netbox platform slug.
+* **BMCs (iDRAC, iLO)** — a BMC can be a device of role `network-bmc`, or the
+  out-of-band IP (`oob_ip`) of the server it manages. The latter is rendered as
+  the very same host, with the role `network-bmc`: named after the IP's DNS
+  name, addressed and tagged by the IP, monitored while the IP is active, with
+  the server's vendor and the name of the interface holding the IP as model and
+  platform (`iDrac9` → platform `idrac9`). An `oob_ip` without a DNS name, or not
+  on an interface, yields no host and a warning. A name still held by a device
+  is left to the device, so BMC devices can be moved to their servers one by
+  one without a host being rendered twice. A DNS name designated by the
+  `oob_ip` of two servers goes to the first one in Netbox's order, with a
+  warning for the other.
 
 ## Development
 

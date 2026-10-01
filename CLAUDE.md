@@ -70,3 +70,4 @@ mise netbox-api:build
 - Netbox tags drive behavior: `check-by-snmp` → SNMP monitoring; `check-only-ping` → ping-only. Storage/network device roles also force SNMP checks.
 - OS detection (`netbox_linux?`, `netbox_windows?`) is based on the platform slug from Netbox.
 - Objects can be filtered per-site via `include_objects` / `exclude_objects` in the site config.
+- A server's `oob_ip` yields a `Netbox::BmcHost` served with role `network-bmc`, rendering exactly the host a BMC device of that role rendered (DNS name, IP, IP tags and status, server vendor, interface name as model and platform). `spec/netbox_extractor/netbox/bmc_hosts_spec.cr` holds that equivalence; keep it byte for byte.

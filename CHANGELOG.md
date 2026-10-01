@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A BMC (iDRAC, iLO) modelled as the out-of-band IP (`oob_ip`) of the server
+  it manages is rendered as a `network-bmc` host, identical to the one a BMC
+  device of that role produced: same name (the IP's DNS name), address, tags,
+  vendor, model and platform (from the name of the interface holding the IP),
+  and the same Icinga file. BMC devices can therefore be replaced by their
+  servers' `oob_ip` without any change to the generated Icinga config or
+  Ansible inventories; a name still held by a device is left to the device,
+  and a name designated by two servers' `oob_ip` to the first of them.
+
 ## [2.2.0] - 2026-09-23
 
 ### Added

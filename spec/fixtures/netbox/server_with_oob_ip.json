@@ -1,0 +1,125 @@
+{
+  "id": 43,
+  "url": "https://netbox.example.net/api/dcim/devices/43/",
+  "display_url": "https://netbox.example.net/dcim/devices/43/",
+  "display": "esx07.lab01",
+  "name": "esx07.lab01",
+  "device_type": {
+    "id": 4,
+    "url": "https://netbox.example.net/api/dcim/device-types/4/",
+    "display": "PowerEdge R640",
+    "manufacturer": {
+      "id": 11,
+      "url": "https://netbox.example.net/api/dcim/manufacturers/11/",
+      "display": "Dell",
+      "name": "Dell",
+      "slug": "dell",
+      "description": ""
+    },
+    "model": "PowerEdge R640",
+    "slug": "dell-poweredge-r640",
+    "description": ""
+  },
+  "role": {
+    "id": 3,
+    "url": "https://netbox.example.net/api/dcim/device-roles/3/",
+    "display": "Hypervisor ESX",
+    "name": "Hypervisor ESX",
+    "slug": "hypervisor-esx",
+    "description": "",
+    "device_count": 0,
+    "virtualmachine_count": 0,
+    "_depth": 0
+  },
+  "tenant": null,
+  "platform": {
+    "id": 21,
+    "url": "https://netbox.example.net/api/dcim/platforms/21/",
+    "display": "VMware ESXi 6.7.0",
+    "name": "VMware ESXi 6.7.0",
+    "slug": "vmware-esxi-670",
+    "description": "",
+    "device_count": 0,
+    "virtualmachine_count": 0,
+    "_depth": 0
+  },
+  "serial": "",
+  "asset_tag": null,
+  "site": {
+    "id": 12,
+    "url": "https://netbox.example.net/api/dcim/sites/12/",
+    "display": "DC1",
+    "name": "DC1",
+    "slug": "dc1",
+    "description": ""
+  },
+  "location": null,
+  "rack": null,
+  "position": null,
+  "face": null,
+  "latitude": null,
+  "longitude": null,
+  "parent_device": null,
+  "status": {
+    "value": "active",
+    "label": "Active"
+  },
+  "airflow": null,
+  "primary_ip": {
+    "id": 7020,
+    "url": "https://netbox.example.net/api/ipam/ip-addresses/7020/",
+    "display": "192.0.2.20/24",
+    "family": {
+      "value": 4,
+      "label": "IPv4"
+    },
+    "address": "192.0.2.20/24",
+    "description": ""
+  },
+  "primary_ip4": {
+    "id": 7020,
+    "url": "https://netbox.example.net/api/ipam/ip-addresses/7020/",
+    "display": "192.0.2.20/24",
+    "family": {
+      "value": 4,
+      "label": "IPv4"
+    },
+    "address": "192.0.2.20/24",
+    "description": ""
+  },
+  "primary_ip6": null,
+  "oob_ip": {
+    "id": 7054,
+    "url": "https://netbox.example.net/api/ipam/ip-addresses/7054/",
+    "display": "192.0.2.54/24",
+    "family": {
+      "value": 4,
+      "label": "IPv4"
+    },
+    "address": "192.0.2.54/24",
+    "description": ""
+  },
+  "cluster": null,
+  "virtual_chassis": null,
+  "vc_position": null,
+  "vc_priority": null,
+  "description": "",
+  "comments": "",
+  "config_template": null,
+  "config_context": {},
+  "local_context_data": null,
+  "tags": [],
+  "custom_fields": {},
+  "created": "2021-11-28T01:00:00+01:00",
+  "last_updated": "2025-05-13T00:52:12.564597+02:00",
+  "console_port_count": 0,
+  "console_server_port_count": 0,
+  "power_port_count": 0,
+  "power_outlet_count": 0,
+  "interface_count": 7,
+  "front_port_count": 0,
+  "rear_port_count": 0,
+  "device_bay_count": 0,
+  "module_bay_count": 0,
+  "inventory_item_count": 0
+}

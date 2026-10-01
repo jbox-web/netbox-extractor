@@ -17,7 +17,7 @@ module NetboxExtractor
       @template : String
       @icinga_filename : Path
       @site : NetboxExtractor::Config::Site
-      @host : NetboxClient::DeviceWithConfigContext | NetboxClient::VirtualMachineWithConfigContext
+      @host : NetboxClient::DeviceWithConfigContext | NetboxClient::VirtualMachineWithConfigContext | NetboxExtractor::Netbox::BmcHost
       @ansible_facts : Hash(String, JSON::Any)?
 
       # Binds the presenter to its site and Netbox host, resolving the role-based

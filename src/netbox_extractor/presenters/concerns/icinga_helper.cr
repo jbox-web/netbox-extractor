@@ -153,7 +153,7 @@ module NetboxExtractor
         os_name = fact.try(&.as_s?) || @host.netbox_os_name
 
         case @host
-        when NetboxClient::DeviceWithConfigContext
+        when NetboxClient::DeviceWithConfigContext, NetboxExtractor::Netbox::BmcHost
           os_name.split("-").first
         else
           os_name

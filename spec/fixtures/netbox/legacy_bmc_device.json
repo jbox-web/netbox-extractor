@@ -1,0 +1,115 @@
+{
+  "id": 89,
+  "url": "https://netbox.example.net/api/dcim/devices/89/",
+  "display_url": "https://netbox.example.net/dcim/devices/89/",
+  "display": "drac-esx07.lab01",
+  "name": "drac-esx07.lab01",
+  "device_type": {
+    "id": 14,
+    "url": "https://netbox.example.net/api/dcim/device-types/14/",
+    "display": "iDrac9",
+    "manufacturer": {
+      "id": 11,
+      "url": "https://netbox.example.net/api/dcim/manufacturers/11/",
+      "display": "Dell",
+      "name": "Dell",
+      "slug": "dell",
+      "description": ""
+    },
+    "model": "iDrac9",
+    "slug": "idrac9",
+    "description": ""
+  },
+  "role": {
+    "id": 12,
+    "url": "https://netbox.example.net/api/dcim/device-roles/12/",
+    "display": "Network BMC",
+    "name": "Network BMC",
+    "slug": "network-bmc",
+    "description": "",
+    "device_count": 0,
+    "virtualmachine_count": 0,
+    "_depth": 0
+  },
+  "tenant": null,
+  "platform": {
+    "id": 362,
+    "url": "https://netbox.example.net/api/dcim/platforms/362/",
+    "display": "iDrac9",
+    "name": "iDrac9",
+    "slug": "idrac9",
+    "description": "",
+    "device_count": 0,
+    "virtualmachine_count": 0,
+    "_depth": 0
+  },
+  "serial": "",
+  "asset_tag": null,
+  "site": {
+    "id": 12,
+    "url": "https://netbox.example.net/api/dcim/sites/12/",
+    "display": "DC1",
+    "name": "DC1",
+    "slug": "dc1",
+    "description": ""
+  },
+  "location": null,
+  "rack": null,
+  "position": null,
+  "face": null,
+  "latitude": null,
+  "longitude": null,
+  "parent_device": null,
+  "status": {
+    "value": "active",
+    "label": "Active"
+  },
+  "airflow": null,
+  "primary_ip": {
+    "id": 7054,
+    "url": "https://netbox.example.net/api/ipam/ip-addresses/7054/",
+    "display": "192.0.2.54/24",
+    "family": {
+      "value": 4,
+      "label": "IPv4"
+    },
+    "address": "192.0.2.54/24",
+    "description": ""
+  },
+  "primary_ip4": {
+    "id": 7054,
+    "url": "https://netbox.example.net/api/ipam/ip-addresses/7054/",
+    "display": "192.0.2.54/24",
+    "family": {
+      "value": 4,
+      "label": "IPv4"
+    },
+    "address": "192.0.2.54/24",
+    "description": ""
+  },
+  "primary_ip6": null,
+  "oob_ip": null,
+  "cluster": null,
+  "virtual_chassis": null,
+  "vc_position": null,
+  "vc_priority": null,
+  "description": "",
+  "comments": "",
+  "config_template": null,
+  "config_context": {},
+  "local_context_data": null,
+  "tags": [],
+  "custom_fields": {},
+  "created": "2021-12-03T01:00:00+01:00",
+  "last_updated": "2026-03-05T00:44:28.369214+01:00",
+  "console_port_count": 0,
+  "console_server_port_count": 0,
+  "power_port_count": 0,
+  "power_outlet_count": 0,
+  "interface_count": 1,
+  "front_port_count": 0,
+  "rear_port_count": 0,
+  "device_bay_count": 0,
+  "module_bay_count": 0,
+  "inventory_item_count": 0
+}
