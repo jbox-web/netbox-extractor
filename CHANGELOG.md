@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `netbox-extractor licenses` prints the third-party notices embedded in the
+  binary: the runtime shards, the C libraries it links statically (OpenSSL,
+  libxml2, liblzma, libyaml, PCRE2, zlib, Boehm GC, musl, libgcc) and the
+  Crystal runtime, assembled at build time from `licenses.manifest`
+
+### Fixed
+
+- The macOS binaries no longer depend on Homebrew's OpenSSL and GMP: they
+  link `openssl@4` statically, no longer link GMP at all (the generated
+  NetBox client required `big` without using it), and only load libraries
+  macOS ships
+
+### Changed
+
+- Releases are built and published by crystalreleaser
+  (`.crystalreleaser.yml`, `.github/workflows/release.yml`); the assets keep
+  their names, `netbox-extractor-<os>-<arch>` and its `.sha256`
+
 ## [2.3.0] - 2026-10-01
 
 ### Added

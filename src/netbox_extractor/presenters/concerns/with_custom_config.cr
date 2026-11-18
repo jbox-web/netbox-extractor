@@ -10,11 +10,11 @@ module NetboxExtractor
         # This method looks for custom check configuration.
         # It returns nil if no custom configuration is found,
         # otherwise it returns the custom configuration
-        private def check_{{service.id}}?
+        private def check_{{ service.id }}?
           config = find_custom_config_for(@host)
           return nil if config.nil?
 
-          check = config.check_{{service.id}}
+          check = config.check_{{ service.id }}
           return nil if check.nil?
 
           check.to_h

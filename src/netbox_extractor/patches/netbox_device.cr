@@ -6,7 +6,6 @@ class NetboxClient::DeviceWithConfigContext
 
   # True when SNMP monitoring applies: the shared tag-based check, or a
   # storage/network device role which always forces SNMP.
-  # ameba:disable Documentation/DocumentationAdmonition
   # TODO: make this configurable?
   def netbox_check_by_snmp?
     super || netbox_role.starts_with?("storage-") || netbox_role.starts_with?("network-")

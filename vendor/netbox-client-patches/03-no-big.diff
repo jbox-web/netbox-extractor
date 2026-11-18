@@ -1,0 +1,8 @@
+diff --git a/vendor/netbox-client/src/netbox-client.cr b/vendor/netbox-client/src/netbox-client.cr
+--- a/vendor/netbox-client/src/netbox-client.cr
++++ b/vendor/netbox-client/src/netbox-client.cr
+@@ -7,4 +7,2 @@
+ #
+-require "big"
+-require "big/json"
+ require "json"

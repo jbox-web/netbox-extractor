@@ -34,8 +34,6 @@ dependencies:
     path: vendor/netbox-client
 
 development_dependencies:
-  ameba:
-    github: crystal-ameba/ameba
   spectator:
     gitlab: arctic-fox/spectator
     version: ~> 0.12.0

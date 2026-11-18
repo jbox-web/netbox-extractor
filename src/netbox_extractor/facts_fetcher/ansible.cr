@@ -21,7 +21,7 @@ module NetboxExtractor
       # `Mutex` so racing fibers share a single channel.
       def self.playbook_slots
         max = NetboxExtractor.config.ansible.fetch_facts.max_parallel_playbooks
-        return nil if max <= 0
+        return if max <= 0
 
         @@slots_mutex.synchronize { @@slots ||= Channel(Nil).new(max) }
       end

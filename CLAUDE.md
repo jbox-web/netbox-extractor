@@ -18,16 +18,41 @@ mise run dev:deps          # Install dependencies (shards install)
 mise run dev:build         # Compile development binary to bin/netbox-extractor
 mise run dev:spec          # Run tests
 mise run dev:spec-mt       # Run tests multi-threaded (CI runs both)
-mise run dev:ameba         # Run static analysis (ameba linter, bounded by timeout)
-mise run dev:format        # Format code (crystal tool format)
+mise run dev:ameba         # Run static analysis (ameba, a mise tool, bounded by its task timeout)
+mise run dev:format        # Format code (crystal tool format src/ spec/)
 mise run dev:format-check  # Check formatting without writing (CI gate)
 mise run dev:docs          # Build API docs (CI gate)
+mise run dev:coverage      # Spec line coverage with kcov -> coverage/index.html
+mise run dev:licenses      # Assemble licenses/ (every compiling task depends on it)
+mise run release:static    # Release snapshot by crystalreleaser into dist/, nothing published
 ```
 
-Run a single spec file:
+Run a single spec file (never bare `crystal spec`: it skips the pinned
+toolchain and the `dev:licenses` dependency):
 ```sh
-crystal spec spec/path/to/file_spec.cr
+mise dev:spec spec/path/to/file_spec.cr
 ```
+
+`mise.toml`, `.github/workflows/{ci,release}.yml`, `.crystalreleaser.yml`,
+`Brewfile` and `scripts/` are copies of the canonical templates of
+`~/.claude/templates/crystal/`. Project divergences: the java/python tools,
+the `OPENAPI_*`/`NETBOX_*` vars and the `netbox-api:*` tasks in `mise.toml`,
+no `dev:docker-image` (the project builds no image), the libxml2/xz apk
+packages in `.crystalreleaser.yml`, `curl` in the `Brewfile`.
+
+Releases: crystalreleaser builds the binaries (`mise release:static` locally,
+`.github/workflows/release.yml` on a `v*` tag, which publishes
+`netbox-extractor-<os>-<arch>` and its `.sha256`). The darwin binaries link
+Homebrew's `openssl@4` statically; crystalreleaser fails the build if one
+still loads a library macOS does not ship — the reason
+`vendor/netbox-client-patches/03-no-big.diff` drops the generated client's
+unused `require "big"`, which linked Homebrew's GMP.
+
+Licenses: `licenses.manifest` follows the link line of the static binary
+(recorded in its header) and lists every runtime shard, transitive ones
+included; `scripts/harvest-licenses.sh` assembles the gitignored `licenses/`,
+which `src/netbox_extractor/licenses.cr` embeds and `netbox-extractor
+licenses` prints. Compiling without it fails on purpose.
 
 ## Architecture
 

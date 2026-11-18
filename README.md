@@ -44,6 +44,7 @@ netbox-extractor <subcommand> <action> [flags...]
 | `config check`         | Check the configuration without generating     |
 | `config dump`          | Print the effective configuration, secrets redacted |
 | `test_api get`         | Check connectivity to the Netbox API           |
+| `licenses`             | Print the third-party notices embedded in the binary |
 
 Common flags:
 
@@ -177,11 +178,25 @@ mise run dev:ameba         # Static analysis (ameba)
 mise run dev:format        # Format code
 mise run dev:format-check  # Check formatting without writing
 mise run dev:docs          # Build API docs
+mise run dev:coverage      # Spec line coverage with kcov, into coverage/
+mise run dev:licenses      # Assemble licenses/ from licenses.manifest
+mise run release:static    # Rehearse the release with crystalreleaser into dist/ (nothing published)
 bin/netbox-extractor
 ```
 
 CI runs `dev:format-check`, `dev:ameba`, `dev:docs`, `dev:spec` and
-`dev:spec-mt`, so all five should pass before pushing.
+`dev:spec-mt`, plus `release:static` on linux and both macOS runners, so all
+six should pass before pushing.
+
+Releases are built and published by [crystalreleaser](https://github.com/jbox-web/crystalreleaser)
+(`.crystalreleaser.yml`, `.github/workflows/release.yml`, on a `v*` tag):
+`netbox-extractor-<os>-<arch>` for linux and darwin, amd64 and arm64, each
+with its `.sha256`. The macOS binaries link OpenSSL statically and only load
+libraries macOS ships.
+
+The binaries embed the notices of the code they carry
+(`netbox-extractor licenses`), assembled from `licenses.manifest` by
+`scripts/harvest-licenses.sh` (`mise dev:licenses`).
 
 ## Contributing
 

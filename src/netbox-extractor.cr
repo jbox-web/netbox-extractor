@@ -10,8 +10,8 @@ require "./netbox_extractor"
 # anything that needs the code can require the library instead.
 #
 # The handler is unconditional: `Crystal.env` reads CRYSTAL_ENV at runtime and
-# nothing sets it — not the Dockerfile, not Makefile.release, and certainly not
-# an operator running the static binary from a release. Guarding it on
+# nothing sets it — not the release builds of crystalreleaser, and certainly
+# not an operator running the static binary from a release. Guarding it on
 # `production?` made it dead code exactly where it was meant to run.
 begin
   NetboxExtractor::CLI.run

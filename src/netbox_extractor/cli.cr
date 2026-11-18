@@ -14,7 +14,7 @@ module NetboxExtractor
     # the whole suite exit before a single example was defined.
     def unknown_subcommand(argv)
       word = argv.first?.try(&.to_s)
-      return nil if word.nil? || word.starts_with?('-')
+      return if word.nil? || word.starts_with?('-')
 
       word
     end
@@ -318,6 +318,15 @@ module NetboxExtractor
       end
     end
 
+    # Prints the third-party notices embedded in the binary (`NetboxExtractor::Licenses`).
+    class Licenses < Admiral::Command
+      define_help description: "Print the third-party notices embedded in this binary"
+
+      def run
+        print NetboxExtractor::Licenses.text
+      end
+    end
+
     define_version NetboxExtractor.version
     define_help description: "Generate Ansible inventories and Icinga configuration files from Netbox"
 
@@ -325,6 +334,7 @@ module NetboxExtractor
     register_sub_command icinga, Icinga, description: "Netbox/Icinga subcommands"
     register_sub_command bind, Bind, description: "Netbox/Bind subcommands"
     register_sub_command config, Config, description: "Configuration subcommands"
+    register_sub_command licenses, Licenses, description: "Print the embedded third-party notices"
     register_sub_command test_api, TestApi, description: "Netbox/Test subcommands"
 
     def run

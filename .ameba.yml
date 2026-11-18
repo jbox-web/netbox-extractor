@@ -1,6 +1,11 @@
 ---
+# lib/ holds the installed shards: ameba 1.7.0, a mise tool rather than a shard,
+# lints it unless told otherwise. docs/ and licenses/ are generated.
 Excluded:
   - vendor/
+  - lib/
+  - docs/
+  - licenses/
 
 Naming/BlockParameterName:
   Enabled: false

@@ -15,9 +15,9 @@ module NetboxExtractor
       # named service's custom check data into `locals` under `key` when present.
       macro define_method_load_template_locals(service, key)
         # This method extends @template_locals with custom check configuration if any
-        private def load_template_locals_check_{{service.id}}(locals)
-          if data = check_{{service.id}}?
-            locals.merge!({ "{{key.id}}" => data })
+        private def load_template_locals_check_{{ service.id }}(locals)
+          if data = check_{{ service.id }}?
+            locals.merge!({ "{{ key.id }}" => data })
           end
         end
       end
@@ -166,7 +166,7 @@ module NetboxExtractor
 
       private def ansible_os_distro
         distro = @ansible_facts.try &.dig?("ansible_distribution")
-        return nil if distro.nil?
+        return if distro.nil?
 
         # `as_s?` like ansible_os_name above: a non-string fact is a bad file,
         # not a reason to raise inside the host's fiber.
@@ -201,7 +201,7 @@ module NetboxExtractor
 
       private def fetch_ansible_facts(site, host)
         facts_file = NetboxExtractor.config.ansible.fetch_facts.cache_path.join("#{site.id}.#{host.name}")
-        return nil unless File.exists?(facts_file)
+        return unless File.exists?(facts_file)
 
         # A facts file is produced by an external Ansible run, so valid JSON that
         # is not an object is a real possibility. `as_h?` yields nil there

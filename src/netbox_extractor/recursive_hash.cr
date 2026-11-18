@@ -1,14 +1,13 @@
 module NetboxExtractor
   # Define possible value types for our own AnyHash class (RecursiveHash)
-  alias ValuesType = Nil |
-                     Bool |
+  alias ValuesType = Bool |
                      Int32 |
                      Int64 |
                      Float32 |
                      Float64 |
                      String |
                      Time |
-                     Array(ValuesType)
+                     Array(ValuesType)?
 
   # Define our own AnyHash class (RecursiveHash)
   # RecursiveHash
